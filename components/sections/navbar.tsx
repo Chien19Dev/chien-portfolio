@@ -1,10 +1,14 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { Home, LayoutDashboard, Menu, X } from "lucide-react";
+import { Home, LayoutDashboard, Menu, X, LogIn, LogOut, User } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ModeToggle } from "./button-theme";
 import { cn } from "@/lib/utils";
+import { useSession, signOut } from "next-auth/react";
+
+const ADMIN_EMAIL = "nguyendinhchien19042003@gmail.com";
 
 const navLinks = [
   { href: "/", label: "Trang chủ", icon: Home },
@@ -13,6 +17,13 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const router = useRouter();
+  const { data: session, status, update } = useSession();
+  const isAdmin = session?.user?.email === ADMIN_EMAIL;
+
+  const visibleNavLinks = navLinks.filter(
+    (link) => link.href !== "/admin" || isAdmin
+  );
 
   return (
     <header className="sticky top-0 z-50 w-full bg-background/92 backdrop-blur-md supports-[backdrop-filter]:bg-background/75">
@@ -30,8 +41,8 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-8">
-            {navLinks.map(({ href, label, icon: Icon }) => (
+          <div className="hidden md:flex items-center gap-6">
+            {visibleNavLinks.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
@@ -41,6 +52,23 @@ export default function Navbar() {
                 <span>{label}</span>
               </Link>
             ))}
+            {status === "loading" ? null : session ? (
+              <button
+                onClick={() => signOut({ callbackUrl: "/" })}
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Đăng xuất</span>
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Đăng nhập</span>
+              </Link>
+            )}
             <ModeToggle />
           </div>
 
@@ -61,11 +89,11 @@ export default function Navbar() {
         <div
           className={cn(
             "md:hidden overflow-hidden transition-all duration-300",
-            mobileMenuOpen ? "max-h-48 pb-4" : "max-h-0",
+            mobileMenuOpen ? "max-h-64 pb-4" : "max-h-0",
           )}
         >
           <div className="space-y-3 pt-3 border-t border-border">
-            {navLinks.map(({ href, label, icon: Icon }) => (
+            {visibleNavLinks.map(({ href, label, icon: Icon }) => (
               <Link
                 key={href}
                 href={href}
@@ -76,6 +104,27 @@ export default function Navbar() {
                 <span>{label}</span>
               </Link>
             ))}
+            {status === "loading" ? null : session ? (
+              <button
+                onClick={() => {
+                  signOut({ callbackUrl: "/" });
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                <LogOut className="h-4 w-4" />
+                <span>Đăng xuất</span>
+              </button>
+            ) : (
+              <Link
+                href="/login"
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                <LogIn className="h-4 w-4" />
+                <span>Đăng nhập</span>
+              </Link>
+            )}
             <ModeToggle />
           </div>
         </div>
