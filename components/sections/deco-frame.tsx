@@ -1,8 +1,6 @@
 import { cn } from "@/lib/utils";
 
-type DecoFrameProps = {
-  children: React.ReactNode;
-  className?: string;
+type DecoFrameProps = React.HTMLAttributes<HTMLDivElement> & {
   accent?: boolean;
 };
 
@@ -10,6 +8,7 @@ export function DecoFrame({
   children,
   className,
   accent = false,
+  ...rest
 }: DecoFrameProps) {
   return (
     <div
@@ -18,6 +17,7 @@ export function DecoFrame({
         accent && "deco-panel-accent",
         className,
       )}
+      {...rest}
     >
       <span className="deco-corner deco-corner-tl" aria-hidden />
       <span className="deco-corner deco-corner-tr" aria-hidden />

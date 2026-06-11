@@ -8,10 +8,10 @@ import { Button } from "@/components/ui/button";
 import { Section } from "@/types/types";
 import { Sidebar } from "@/components/admin/sidebar";
 import { WorkspaceHeader } from "@/components/admin/workspace-header";
-import { ProfilesSection } from "@/components/sections/profiles-section";
-import { ProjectsSection } from "@/components/sections/projects-section";
-import { SkillsSection } from "@/components/sections/skills-section";
-import { ContactsSection } from "@/components/sections/contacts-section";
+import { ProfilesSection } from "@/components/sections/admin/admin-profiles-section";
+import { ProjectsSection } from "@/components/sections/admin/admin-projects-section";
+import { SkillsSection } from "@/components/sections/admin/admin-skills-section";
+import { ContactsSection } from "@/components/sections/admin/admin-contacts-section";
 import { Label } from "@/components/ui/label";
 
 type ProfileForm = Omit<Profile, "id" | "createdAt" | "updatedAt">;

@@ -2,10 +2,10 @@ import type { FormEvent } from "react";
 import { Input } from "@/components/ui/input";
 import { api, Skill } from "@/lib/api";
 import { alertSuccess, alertError } from "@/lib/alerts";
-import { WorkspaceSplit } from "../admin/workspace-split";
-import { WsField } from "../admin/ws-field";
-import { WsSubmit } from "../admin/ws-submit";
-import { WsTable } from "../admin/ws-table";
+import { WorkspaceSplit } from "@/components/admin/workspace-split";
+import { WsField } from "@/components/admin/ws-field";
+import { WsSubmit } from "@/components/admin/ws-submit";
+import { WsTable } from "@/components/admin/ws-table";
 
 type SkillForm = Omit<Skill, "id" | "createdAt" | "updatedAt">;
 

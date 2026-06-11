@@ -4,10 +4,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { api, Profile } from "@/lib/api";
 import { alertSuccess, alertError } from "@/lib/alerts";
-import { WorkspaceSplit } from "../admin/workspace-split";
-import { WsField } from "../admin/ws-field";
-import { WsSubmit } from "../admin/ws-submit";
-import { WsTable } from "../admin/ws-table";
+import { WorkspaceSplit } from "@/components/admin/workspace-split";
+import { WsField } from "@/components/admin/ws-field";
+import { WsSubmit } from "@/components/admin/ws-submit";
+import { WsTable } from "@/components/admin/ws-table";
+
 
 type ProfileForm = Omit<Profile, "id" | "createdAt" | "updatedAt">;
 

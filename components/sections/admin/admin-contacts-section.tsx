@@ -1,6 +1,6 @@
+import { ContactCard } from "@/components/admin/contact-card";
+import { Label } from "@/components/ui/label";
 import { ContactMessage } from "@/lib/api";
-import { ContactCard } from "../admin/contact-card";
-import { Label } from "../ui/label";
 
 export function ContactsSection({
   contacts,
