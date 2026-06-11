@@ -1,12 +1,21 @@
 ﻿"use client";
 
 import { useState } from "react";
-import { Home, LayoutDashboard, Menu, X, LogIn, LogOut, User } from "lucide-react";
+import {
+  Home,
+  LayoutDashboard,
+  Menu,
+  X,
+  LogIn,
+  LogOut,
+  User,
+} from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { ModeToggle } from "./button-theme";
 import { cn } from "@/lib/utils";
 import { useSession, signOut } from "next-auth/react";
+import { Button } from "../ui/button";
 
 const ADMIN_EMAIL = process.env.NEXT_PUBLIC_ADMIN_EMAIL;
 
@@ -22,11 +31,11 @@ export default function Navbar() {
   const isAdmin = session?.user?.email === ADMIN_EMAIL;
 
   const visibleNavLinks = navLinks.filter(
-    (link) => link.href !== "/admin" || isAdmin
+    (link) => link.href !== "/admin" || isAdmin,
   );
 
   return (
-    <header className="sticky top-0 z-50 w-full bg-background/92 backdrop-blur-md supports-[backdrop-filter]:bg-background/75">
+    <header className="sticky top-0 z-50 w-full bg-background/92 backdrop-blur-md supports-backdrop-filter:bg-background/75">
       <div className="deco-nav-line" />
       <nav className="container mx-auto px-4">
         <div className="flex h-16 items-center justify-between">
@@ -53,13 +62,15 @@ export default function Navbar() {
               </Link>
             ))}
             {status === "loading" ? null : session ? (
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => signOut({ callbackUrl: "/" })}
                 className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
               >
                 <LogOut className="h-4 w-4" />
                 <span>Đăng xuất</span>
-              </button>
+              </Button>
             ) : (
               <Link
                 href="/login"
@@ -72,7 +83,9 @@ export default function Navbar() {
             <ModeToggle />
           </div>
 
-          <button
+          <Button
+            variant="ghost"
+            size="sm"
             type="button"
             className="md:hidden p-2 border border-border text-foreground transition-colors hover:bg-accent"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -83,7 +96,7 @@ export default function Navbar() {
             ) : (
               <Menu className="h-5 w-5" />
             )}
-          </button>
+          </Button>
         </div>
 
         <div
@@ -105,7 +118,9 @@ export default function Navbar() {
               </Link>
             ))}
             {status === "loading" ? null : session ? (
-              <button
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => {
                   signOut({ callbackUrl: "/" });
                   setMobileMenuOpen(false);
@@ -114,7 +129,7 @@ export default function Navbar() {
               >
                 <LogOut className="h-4 w-4" />
                 <span>Đăng xuất</span>
-              </button>
+              </Button>
             ) : (
               <Link
                 href="/login"

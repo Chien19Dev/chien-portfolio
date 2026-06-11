@@ -1,6 +1,6 @@
 import { ContactMessage } from "@/lib/api";
 import { ContactCard } from "../admin/contact-card";
-
+import { Label } from "../ui/label";
 
 export function ContactsSection({
   contacts,
@@ -12,7 +12,9 @@ export function ContactsSection({
   return (
     <div className="flex-1 overflow-y-auto p-6">
       {contacts.length === 0 ? (
-        <p className="text-sm text-muted-foreground">Chưa có tin nhắn nào.</p>
+        <Label className="text-sm text-muted-foreground">
+          Chưa có tin nhắn nào.
+        </Label>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {contacts.map((item) => (

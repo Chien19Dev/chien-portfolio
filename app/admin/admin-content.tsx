@@ -12,6 +12,7 @@ import { ProfilesSection } from "@/components/sections/profiles-section";
 import { ProjectsSection } from "@/components/sections/projects-section";
 import { SkillsSection } from "@/components/sections/skills-section";
 import { ContactsSection } from "@/components/sections/contacts-section";
+import { Label } from "@/components/ui/label";
 
 type ProfileForm = Omit<Profile, "id" | "createdAt" | "updatedAt">;
 type ProjectForm = Omit<Project, "id" | "createdAt" | "updatedAt"> & {
@@ -152,14 +153,19 @@ export default function AdminPage() {
   return (
     <div className="deco-page relative min-h-screen">
       <div className="relative z-10 container mx-auto px-4 py-4 md:py-8">
-        <div className="mb-8 flex items-end justify-between">
-          <div>
-            <p className="deco-eyebrow mb-1.5">Bảng điều khiển</p>
-            <h1 className="deco-title text-4xl md:text-5xl text-foreground">
+        <div className="mb-8 flex items-start justify-between">
+          <div className="flex flex-col gap-1">
+            <Label className="deco-eyebrow mb-1.5">Bảng điều khiển</Label>
+            <Label className="deco-title text-4xl md:text-3xl text-foreground">
               Quản trị
-            </h1>
+            </Label>
           </div>
-          <Button variant="outline" size="sm" onClick={load}>
+          <Button
+            variant="default"
+            size="lg"
+            onClick={load}
+            className="rounded-xs"
+          >
             <RefreshCw className="size-3.5" />
             Làm mới
           </Button>

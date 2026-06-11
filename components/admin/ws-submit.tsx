@@ -12,12 +12,18 @@ export function WsSubmit({
 }) {
   return (
     <div className="flex gap-2 pt-2">
-      <Button type="submit" size="sm" className="flex-1">
+      <Button type="submit" size="sm" className="flex-1 rounded-sm">
         <Plus className="size-3.5" />
         {isEditing ? `Cập nhật ${label}` : `Tạo ${label}`}
       </Button>
       {onCancel && (
-        <Button type="button" size="sm" variant="ghost" onClick={onCancel}>
+        <Button
+          type="button"
+          size="sm"
+          className="rounded-sm"
+          variant="ghost"
+          onClick={onCancel}
+        >
           Huỷ
         </Button>
       )}
