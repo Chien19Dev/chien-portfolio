@@ -12,7 +12,6 @@ async function main() {
   })
 
   if (existingUser) {
-    console.log("Admin user already exists")
     return
   }
 
@@ -26,8 +25,6 @@ async function main() {
     },
   })
 
-  console.log("Admin user created:", adminUser.email)
-  console.log("Password:", adminPassword)
 }
 
 main()
