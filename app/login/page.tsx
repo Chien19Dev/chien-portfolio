@@ -1,47 +1,47 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { signIn } from "next-auth/react"
-import { Lock, Shield, Sparkles, Mail, Loader2 } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { DecoFrame } from "@/components/sections/deco-frame"
-import { LoginFormAnimation } from "./login-form-animation"
-import { PasswordInput } from "@/components/ui/password-input"
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { Lock, Shield, Sparkles, Mail, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { DecoFrame } from "@/components/sections/deco-frame";
+import { LoginFormAnimation } from "./login-form-animation";
+import { PasswordInput } from "@/components/ui/password-input";
 
 export default function LoginPage() {
-  const router = useRouter()
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault()
-    setLoading(true)
-    setError("")
+    event.preventDefault();
+    setLoading(true);
+    setError("");
 
-    const formData = new FormData(event.currentTarget)
-    const email = formData.get("email") as string
-    const password = formData.get("password") as string
+    const formData = new FormData(event.currentTarget);
+    const email = formData.get("email") as string;
+    const password = formData.get("password") as string;
 
     try {
       const result = await signIn("credentials", {
         email,
         password,
         redirect: false,
-      })
+      });
 
       if (result?.error) {
-        setError("Email hoặc mật khẩu không đúng")
+        setError("Email hoặc mật khẩu không đúng");
       } else {
-        router.push("/")
-        router.refresh()
+        router.push("/");
+        router.refresh();
       }
     } catch (error) {
-      setError("Có lỗi xảy ra, vui lòng thử lại")
+      setError("Có lỗi xảy ra, vui lòng thử lại");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }
 
@@ -98,15 +98,9 @@ export default function LoginPage() {
                     />
                   </div>
                 </div>
-                <PasswordInput
-                  id="password"
-                  name="password"
-                  required
-                />
+                <PasswordInput id="password" name="password" required />
                 {error && (
-                  <div className="text-sm text-destructive">
-                    {error}
-                  </div>
+                  <div className="text-sm text-destructive">{error}</div>
                 )}
                 <Button
                   type="submit"
@@ -126,7 +120,8 @@ export default function LoginPage() {
               </form>
               <div className="pt-4 border-t border-border">
                 <p className="text-xs text-muted-foreground text-center">
-                  Bằng cách đăng nhập, bạn đồng ý với điều khoản dịch vụ và chính sách bảo mật của chúng tôi
+                  Bằng cách đăng nhập, bạn đồng ý với điều khoản dịch vụ và
+                  chính sách bảo mật của chúng tôi
                 </p>
               </div>
             </div>
@@ -134,5 +129,5 @@ export default function LoginPage() {
         </LoginFormAnimation>
       </div>
     </div>
-  )
+  );
 }

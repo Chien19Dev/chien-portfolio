@@ -75,7 +75,11 @@ export default function Home() {
   }, [profile]);
 
   useEffect(() => {
-    Promise.all([api.profiles.current(), api.projects.list(), api.skills.list()])
+    Promise.all([
+      api.profiles.current(),
+      api.projects.list(),
+      api.skills.list(),
+    ])
       .then(([profileData, projectData, skillData]) => {
         setProfile(profileData);
         setProjects(projectData);
@@ -108,7 +112,6 @@ export default function Home() {
         )}
 
         <div className="grid items-stretch gap-6 md:grid-cols-12">
-          {/* Hồ sơ */}
           <div className="md:col-span-5">
             <MotionDiv {...fadeUp} className="h-full">
               <DecoFrame accent className="h-full p-6 md:p-8">
@@ -116,7 +119,7 @@ export default function Home() {
                   <ProfileSkeleton />
                 ) : (
                   <div className="space-y-7">
-                    <Avatar className="deco-avatar-ring size-[118px] rounded-full text-3xl font-medium">
+                    <Avatar className="deco-avatar-ring size-29.5 rounded-full text-3xl font-medium">
                       {profile?.avatar ? (
                         <AvatarImage
                           src={profile.avatar}
@@ -145,7 +148,9 @@ export default function Home() {
                         "Tạo hồ sơ trong trang Quản trị để hiển thị giới thiệu tại đây."}
                     </p>
 
-                    {(profile?.email || profile?.phone || profile?.location) && (
+                    {(profile?.email ||
+                      profile?.phone ||
+                      profile?.location) && (
                       <>
                         <Separator className="bg-primary/20" />
                         <ul className="space-y-3">
@@ -168,10 +173,7 @@ export default function Home() {
                             </ProfileContactItem>
                           )}
                           {profile.location && (
-                            <ProfileContactItem
-                              icon={MapPin}
-                              label="Địa điểm"
-                            >
+                            <ProfileContactItem icon={MapPin} label="Địa điểm">
                               {profile.location}
                             </ProfileContactItem>
                           )}
@@ -243,43 +245,47 @@ export default function Home() {
             >
               <DecoFrame className="p-6 md:p-8">
                 <SectionHeading label="Chuyên môn" title="Kỹ năng" />
-                <div className="mt-6 space-y-4">
-                  {loading ? (
-                    <>
-                      <Skeleton className="h-10 w-full" />
-                      <Skeleton className="h-10 w-full" />
-                      <Skeleton className="h-10 w-3/4" />
-                    </>
-                  ) : skills.length === 0 ? (
-                    <Badge variant="outline">Chưa có kỹ năng</Badge>
-                  ) : (
-                    skills.map((skill) => (
-                      <div key={skill.id} className="space-y-2">
-                        <div className="flex items-center justify-between gap-4">
-                          <span className="text-sm font-medium">
-                            {skill.name}
-                          </span>
-                          {skill.level ? (
-                            <span className="text-xs text-muted-foreground tabular-nums">
+                {loading ? (
+                  <>
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-full" />
+                    <Skeleton className="h-10 w-3/4" />
+                  </>
+                ) : skills.length === 0 ? (
+                  <Badge variant="outline">Chưa có kỹ năng</Badge>
+                ) : (
+                  <div className="mt-6 flex flex-wrap gap-2">
+                    {skills.map((skill) => (
+                      <div
+                        key={skill.id}
+                        className="flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-3 py-1.5"
+                      >
+                        <span className="text-sm font-medium text-foreground">
+                          {skill.name}
+                        </span>
+                        {skill.level ? (
+                          <>
+                            <span className="text-muted-foreground/50 text-xs">
+                              ·
+                            </span>
+                            <span className="text-xs text-primary tabular-nums font-medium">
                               {skill.level}%
                             </span>
-                          ) : null}
-                        </div>
-                        {skill.level ? (
-                          <Progress value={skill.level}>
-                            <ProgressTrack className="h-1 rounded-none bg-muted">
-                              <ProgressIndicator className="rounded-none" />
-                            </ProgressTrack>
-                          </Progress>
-                        ) : (
-                          <Badge variant="secondary" size="sm">
-                            {skill.category || "Kỹ năng"}
-                          </Badge>
-                        )}
+                          </>
+                        ) : skill.category ? (
+                          <>
+                            <span className="text-muted-foreground/50 text-xs">
+                              ·
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {skill.category}
+                            </span>
+                          </>
+                        ) : null}
                       </div>
-                    ))
-                  )}
-                </div>
+                    ))}
+                  </div>
+                )}
               </DecoFrame>
             </MotionDiv>
 
@@ -358,7 +364,7 @@ export default function Home() {
                       Gửi tin nhắn
                     </Button>
                     {notice && (
-                      <Alert variant="success" className="flex-1 min-w-[200px]">
+                      <Alert variant="success" className="flex-1 min-w-50">
                         <AlertDescription>{notice}</AlertDescription>
                       </Alert>
                     )}
@@ -476,7 +482,9 @@ function ProfileContactItem({
       </span>
       <span className="min-w-0">
         <span className="deco-eyebrow block text-[0.58rem]">{label}</span>
-        <span className="block truncate text-sm text-foreground">{children}</span>
+        <span className="block truncate text-sm text-foreground">
+          {children}
+        </span>
       </span>
     </>
   );
@@ -494,17 +502,13 @@ function ProfileContactItem({
     );
   }
 
-  return (
-    <li className="flex items-center gap-3">
-      {content}
-    </li>
-  );
+  return <li className="flex items-center gap-3">{content}</li>;
 }
 
 function ProfileSkeleton() {
   return (
     <div className="space-y-7">
-      <Skeleton className="size-[118px] rounded-full" />
+      <Skeleton className="size-29.5 rounded-full" />
       <div className="space-y-3">
         <Skeleton className="h-3 w-24" />
         <Skeleton className="h-10 w-full" />
