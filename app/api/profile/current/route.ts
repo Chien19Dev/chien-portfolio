@@ -5,6 +5,21 @@ export async function GET() {
   try {
     const profile = await prisma.profile.findFirst({
       orderBy: { createdAt: 'desc' },
+      select: {
+        id: true,
+        fullName: true,
+        title: true,
+        bio: true,
+        avatar: true,
+        email: true,
+        phone: true,
+        location: true,
+        githubUrl: true,
+        linkedinUrl: true,
+        websiteUrl: true,
+        createdAt: true,
+        updatedAt: true,
+      },
     });
     return NextResponse.json(profile || null);
   } catch (error) {

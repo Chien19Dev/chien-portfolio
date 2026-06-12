@@ -28,15 +28,15 @@ export default function Home() {
   }, [profile]);
 
   useEffect(() => {
-    Promise.all([
+    Promise.allSettled([
       api.profiles.current(),
       api.projects.list(),
       api.skills.list(),
     ])
-      .then(([profileData, projectData, skillData]) => {
-        setProfile(profileData);
-        setProjects(projectData);
-        setSkills(skillData);
+      .then((results) => {
+        if (results[0].status === "fulfilled") setProfile(results[0].value);
+        if (results[1].status === "fulfilled") setProjects(results[1].value);
+        if (results[2].status === "fulfilled") setSkills(results[2].value);
       })
       .finally(() => setLoading(false));
   }, []);

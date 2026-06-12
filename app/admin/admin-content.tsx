@@ -67,16 +67,16 @@ export default function AdminPage() {
   const [editingSkillId, setEditingSkillId] = useState("");
 
   async function load() {
-    const [p, pr, s, c] = await Promise.all([
+    const results = await Promise.allSettled([
       api.profiles.list(),
       api.projects.list(),
       api.skills.list(),
       api.contacts.list(),
     ]);
-    setProfiles(p);
-    setProjects(pr);
-    setSkills(s);
-    setContacts(c);
+    if (results[0].status === "fulfilled") setProfiles(results[0].value);
+    if (results[1].status === "fulfilled") setProjects(results[1].value);
+    if (results[2].status === "fulfilled") setSkills(results[2].value);
+    if (results[3].status === "fulfilled") setContacts(results[3].value);
   }
 
   useEffect(() => {
