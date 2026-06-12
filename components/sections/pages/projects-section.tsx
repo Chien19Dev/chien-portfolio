@@ -57,7 +57,7 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                       {project.title}
                     </h3>
                     <p className="flex-1 text-sm text-muted-foreground leading-relaxed">
-                      {project.description}
+                      {project.description?.slice(0, 50)}...
                     </p>
                     <div className="flex flex-wrap gap-1.5">
                       {(project.technologies || []).map((tag) => (
