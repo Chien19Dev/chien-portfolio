@@ -80,7 +80,10 @@ export function Button({
         )}
       </>
     ),
-    className: cn(buttonVariants({ className, size, variant })),
+    className: cn(
+      "cursor-pointer",
+      buttonVariants({ className, size, variant }),
+    ),
     "aria-disabled": loading || undefined,
     "data-loading": loading ? "" : undefined,
     "data-slot": "button",

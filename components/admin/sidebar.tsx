@@ -1,4 +1,9 @@
+"use client";
+
 import { Section } from "@/types/types";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { motion, AnimatePresence } from "framer-motion";
 
 interface SidebarProps {
   section: Section;
@@ -24,10 +29,10 @@ const NAV_ITEMS: {
 export function Sidebar({ section, onSection, counts }: SidebarProps) {
   return (
     <aside className="w-56 shrink-0 border-r border-border bg-muted/30 flex flex-col backdrop-blur-md">
-      <nav className="flex-1 py-4">
-        <p className="px-5 mb-2 text-[0.6rem] tracking-widest uppercase text-muted-foreground">
+      <nav className="flex-1 py-4 gap-2 flex flex-col">
+        <Label className="px-5 mb-2 text-[0.6rem] tracking-widest uppercase text-muted-foreground">
           Nội dung
-        </p>
+        </Label>
         {NAV_ITEMS.map((item) => (
           <NavButton
             key={item.id}
@@ -38,18 +43,22 @@ export function Sidebar({ section, onSection, counts }: SidebarProps) {
           />
         ))}
 
-        <p className="px-5 mt-5 mb-2 text-[0.6rem] tracking-widest uppercase text-muted-foreground">
+        <Label className="px-5 mt-5 mb-2 text-[0.6rem] tracking-widest uppercase text-muted-foreground">
           Hộp thư
-        </p>
+        </Label>
         <NavButton
           active={section === "contacts"}
           onClick={() => onSection("contacts")}
           label="Tin nhắn"
           badge={
             counts.unread > 0 ? (
-              <span className="text-[0.6rem] font-medium bg-destructive/15 text-destructive rounded-full px-1.5 py-0.5 tabular-nums">
+              <motion.span
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                className="text-[0.6rem] font-medium bg-destructive/15 text-destructive rounded-full px-1.5 py-0.5 tabular-nums"
+              >
                 {counts.unread}
-              </span>
+              </motion.span>
             ) : null
           }
         />
@@ -64,9 +73,9 @@ export function Sidebar({ section, onSection, counts }: SidebarProps) {
         ].map(({ n, l }) => (
           <div key={l} className="bg-background/70 px-3 py-2">
             <p className="text-lg font-medium leading-none tabular-nums">{n}</p>
-            <p className="text-[0.6rem] tracking-wide uppercase text-muted-foreground mt-1">
+            <Label className="text-[0.6rem] tracking-wide uppercase text-muted-foreground mt-1">
               {l}
-            </p>
+            </Label>
           </div>
         ))}
       </div>
@@ -88,22 +97,57 @@ function NavButton({
   badge?: React.ReactNode;
 }) {
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="sm"
       onClick={onClick}
       className={[
-        "w-full flex items-center justify-between cursor-pointer px-5 py-2.5 text-sm transition-colors hover:bg-background/60",
-        active
-          ? "bg-background font-medium text-foreground border-l-2 border-primary"
-          : "text-muted-foreground border-l-2 border-transparent",
+        "relative w-full flex items-center justify-between px-5 py-2.5 text-sm rounded-none overflow-hidden",
+        "hover:bg-background/60 transition-colors",
+        active ? "font-medium text-foreground" : "text-muted-foreground",
       ].join(" ")}
     >
-      <span>{label}</span>
-      {badge ??
-        (count !== undefined && (
-          <span className="text-xs text-muted-foreground/60 tabular-nums">
-            {count}
-          </span>
-        ))}
-    </button>
+      <AnimatePresence>
+        {active && (
+          <motion.span
+            layoutId="nav-active-bg"
+            className="absolute inset-0 bg-background"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+          />
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {active && (
+          <motion.span
+            layoutId="nav-active-border"
+            className="absolute left-0 top-0 h-full w-0.75 bg-primary rounded-r-full"
+            initial={{ scaleY: 0, opacity: 0 }}
+            animate={{ scaleY: 1, opacity: 1 }}
+            exit={{ scaleY: 0, opacity: 0 }}
+            transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+          />
+        )}
+      </AnimatePresence>
+      <Label className="relative z-10 cursor-pointer">{label}</Label>
+      <Label className="relative z-10 cursor-pointer">
+        {badge ??
+          (count !== undefined && (
+            <motion.span
+              animate={{
+                color: active
+                  ? "hsl(var(--foreground) / 0.4)"
+                  : "hsl(var(--muted-foreground) / 0.6)",
+              }}
+              transition={{ duration: 0.2 }}
+              className="text-xs tabular-nums"
+            >
+              {count}
+            </motion.span>
+          ))}
+      </Label>
+    </Button>
   );
 }
