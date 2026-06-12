@@ -1,21 +1,21 @@
 import Link from "next/link";
 import { prisma } from "@/lib/prisma";
 import { DecoFrame } from "@/components/sections/deco-frame";
-import { Calendar, Clock, ArrowRight, BookOpen } from "lucide-react";
+import { Calendar, Clock, ArrowRight, BookOpen, User, Tag } from "lucide-react";
+import Image from "next/image";
 
-export const revalidate = 60; // Cache trang trong 60 giây để tối ưu hiệu năng
+export const revalidate = 60;
 
 export default async function BlogPage() {
     let posts: any[] = [];
     let isPrismaReady = false;
 
-    // Kiểm tra an toàn xem model 'post' đã được sinh ra trong Prisma Client chưa
     if (prisma && "post" in prisma) {
         isPrismaReady = true;
         try {
             posts = await (prisma as any).post.findMany({
                 where: { published: true },
-                orderBy: { createdAt: "desc" },
+                orderBy: { publishedAt: "desc" },
             });
         } catch (error) {
             console.error("Lỗi khi truy vấn bài viết từ database:", error);
@@ -32,15 +32,14 @@ export default async function BlogPage() {
                         <p className="deco-eyebrow">Chia sẻ</p>
                         <div className="deco-rule justify-center">
                             <h1 className="deco-title text-4xl md:text-5xl text-foreground shrink-0 px-4">
-                                Bài Viết & Đương Đại
+                                Bài Viết & Kiến thức
                             </h1>
                         </div>
                         <p className="text-muted-foreground max-w-md mx-auto text-sm leading-relaxed">
-                            Nơi tôi ghi lại những trải nghiệm, kiến thức công nghệ và hành trình phát triển phần mềm hàng ngày.
+                            Những bài viết đúc kết kinh nghiệm, công nghệ mới và những giải pháp lập trình thực tế của tôi.
                         </p>
                     </div>
 
-                    {/* Cảnh báo hướng dẫn xử lý nếu Prisma chưa sync */}
                     {!isPrismaReady && (
                         <div className="p-5 border border-destructive/30 bg-destructive/10 text-destructive text-sm rounded-lg text-center space-y-2">
                             <p className="font-semibold">⚠️ Cơ sở dữ liệu chưa sẵn sàng!</p>
@@ -54,7 +53,6 @@ export default async function BlogPage() {
                         </div>
                     )}
 
-                    {/* List Posts */}
                     {isPrismaReady && posts.length === 0 ? (
                         <DecoFrame className="p-12 text-center text-muted-foreground">
                             <BookOpen className="size-12 mx-auto text-primary/40 mb-4" />
@@ -63,46 +61,70 @@ export default async function BlogPage() {
                     ) : (
                         <div className="grid gap-6">
                             {posts.map((post) => {
-                                const formattedDate = new Date(post.createdAt).toLocaleDateString("vi-VN", {
+                                const formattedDate = new Date(post.publishedAt || post.createdAt).toLocaleDateString("vi-VN", {
                                     year: "numeric",
                                     month: "long",
                                     day: "numeric",
+                                    hour: "2-digit",
+                                    minute: "2-digit"
                                 });
 
-                                // Ước lượng thời gian đọc dựa trên số từ (trung bình 200 từ/phút)
-                                const wordCount = post.content ? post.content.split(/\s+/).length : 0;
+                                const wordCount = post.content ? post.content.replace(/<[^>]*>/g, '').split(/\s+/).length : 0;
                                 const readTime = Math.max(1, Math.ceil(wordCount / 200));
 
                                 return (
                                     <Link href={`/blog/${post.slug}`} key={post.id} className="group block">
-                                        <DecoFrame className="p-6 md:p-8 transition-all duration-300 hover:border-primary/50 group-hover:-translate-y-0.5">
-                                            <div className="space-y-4">
-                                                <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-xs text-primary font-medium">
-                          <span className="flex items-center gap-1.5">
-                            <Calendar className="size-3.5" />
-                              {formattedDate}
-                          </span>
-                                                    <span className="text-muted-foreground/30">•</span>
-                                                    <span className="flex items-center gap-1.5">
-                            <Clock className="size-3.5" />
-                                                        {readTime} phút đọc
-                          </span>
-                                                </div>
+                                        <DecoFrame className="p-6 md:p-8 transition-all duration-300 hover:border-primary/50 group-hover:-translate-y-0.5 overflow-hidden">
+                                            <div className="flex flex-col md:flex-row gap-6">
+                                                {post.coverImage && (
+                                                    <div className="relative w-full md:w-48 aspect-video md:aspect-square shrink-0 rounded-lg overflow-hidden border border-border">
+                                                        <Image
+                                                            src={post.coverImage}
+                                                            alt={post.title}
+                                                            fill
+                                                            className="object-cover transition-transform duration-300 group-hover:scale-105"
+                                                        />
+                                                    </div>
+                                                )}
+                                                <div className="flex-1 space-y-4 flex flex-col justify-between">
+                                                    <div className="space-y-2">
+                                                        <div className="flex flex-wrap items-center gap-y-2 gap-x-3 text-xs text-primary font-medium">
+                              <span className="flex items-center gap-1">
+                                <Calendar className="size-3.5" />
+                                  {formattedDate}
+                              </span>
+                                                            <span className="text-muted-foreground/30">•</span>
+                                                            <span className="flex items-center gap-1">
+                                <Clock className="size-3.5" />
+                                                                {readTime} phút đọc
+                              </span>
+                                                            <span className="text-muted-foreground/30">•</span>
+                                                            <span className="flex items-center gap-1">
+                                <Tag className="size-3.5" />
+                                                                {post.category || "General"}
+                              </span>
+                                                        </div>
 
-                                                <div className="space-y-2">
-                                                    <h2 className="deco-title text-2xl md:text-3xl text-foreground transition-colors group-hover:text-primary">
-                                                        {post.title}
-                                                    </h2>
-                                                    {post.summary && (
-                                                        <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
-                                                            {post.summary}
-                                                        </p>
-                                                    )}
-                                                </div>
+                                                        <h2 className="deco-title text-2xl md:text-3xl text-foreground transition-colors group-hover:text-primary">
+                                                            {post.title}
+                                                        </h2>
+                                                        {post.summary && (
+                                                            <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
+                                                                {post.summary}
+                                                            </p>
+                                                        )}
+                                                    </div>
 
-                                                <div className="pt-2 flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider group-hover:gap-2.5 transition-all">
-                                                    Đọc bài viết
-                                                    <ArrowRight className="size-3.5" />
+                                                    <div className="flex items-center justify-between pt-2">
+                            <span className="text-xs text-muted-foreground flex items-center gap-1.5">
+                              <User className="size-3.5 text-primary" />
+                                {post.author || "Chiến Nguyễn"}
+                            </span>
+                                                        <div className="flex items-center gap-1.5 text-xs font-semibold text-primary uppercase tracking-wider group-hover:gap-2.5 transition-all">
+                                                            Đọc bài viết
+                                                            <ArrowRight className="size-3.5" />
+                                                        </div>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </DecoFrame>

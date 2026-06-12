@@ -56,6 +56,7 @@ export default function AdminPage() {
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
   const [contacts, setContacts] = useState<ContactMessage[]>([]);
+  const [postCount, setPostCount] = useState(0);
 
   const [profile, setProfile] = useState<ProfileForm>(emptyProfile);
   const [project, setProject] = useState<ProjectForm>(emptyProject);
@@ -72,11 +73,13 @@ export default function AdminPage() {
       api.projects.list(),
       api.skills.list(),
       api.contacts.list(),
+      api.posts.list(),
     ]);
     if (results[0].status === "fulfilled") setProfiles(results[0].value);
     if (results[1].status === "fulfilled") setProjects(results[1].value);
     if (results[2].status === "fulfilled") setSkills(results[2].value);
     if (results[3].status === "fulfilled") setContacts(results[3].value);
+    if (results[4].status === "fulfilled") setPostCount(results[4].value.length);
   }
 
   useEffect(() => {
@@ -103,18 +106,18 @@ export default function AdminPage() {
 
   async function saveProject(e: FormEvent) {
     e.preventDefault();
-    
+
     if (imageUploading) {
       alertError("Đang tải ảnh lên, vui lòng đợi...");
       return;
     }
-    
+
     const payload = {
       ...project,
       technologies: project.technologiesText
-        .split(",")
-        .map((t) => t.trim())
-        .filter(Boolean),
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean),
     };
     delete (payload as Partial<ProjectForm>).technologiesText;
     try {
@@ -159,104 +162,105 @@ export default function AdminPage() {
   const newUnread = contacts.filter((c) => !c.isRead).length;
 
   return (
-    <div className="deco-page relative min-h-screen">
-      <div className="relative z-10 container mx-auto px-4 py-4 md:py-8">
-        <div className="mb-8 flex items-start justify-between">
-          <div className="flex flex-col gap-1">
-            <Label className="deco-eyebrow mb-1.5">Bảng điều khiển</Label>
-            <Label className="deco-title text-4xl md:text-3xl text-foreground">
-              Quản trị
-            </Label>
+      <div className="deco-page relative min-h-screen">
+        <div className="relative z-10 container mx-auto px-4 py-4 md:py-8">
+          <div className="mb-8 flex items-start justify-between">
+            <div className="flex flex-col gap-1">
+              <Label className="deco-eyebrow mb-1.5">Bảng điều khiển</Label>
+              <Label className="deco-title text-4xl md:text-3xl text-foreground">
+                Quản trị
+              </Label>
+            </div>
+            <Button
+                variant="default"
+                size="lg"
+                onClick={load}
+                className="rounded-xs"
+            >
+              <RefreshCw className="size-3.5" />
+              Làm mới
+            </Button>
           </div>
-          <Button
-            variant="default"
-            size="lg"
-            onClick={load}
-            className="rounded-xs"
+
+          <div
+              className="flex gap-0 border border-border overflow-hidden"
+              style={{ minHeight: "calc(100vh - 220px)" }}
           >
-            <RefreshCw className="size-3.5" />
-            Làm mới
-          </Button>
-        </div>
-
-        <div
-          className="flex gap-0 border border-border overflow-hidden"
-          style={{ minHeight: "calc(100vh - 220px)" }}
-        >
-          <Sidebar
-            section={section}
-            onSection={setSection}
-            counts={{
-              profiles: profiles.length,
-              projects: projects.length,
-              skills: skills.length,
-              unread: newUnread,
-            }}
-          />
-
-          <div className="flex-1 flex flex-col min-w-0">
-            <WorkspaceHeader section={section} />
-
-            {section === "profiles" && (
-              <ProfilesSection
-                profiles={profiles}
-                form={profile}
-                editingId={editingProfileId}
-                onChange={setProfile}
-                onSubmit={saveProfile}
-                onEdit={(item) => {
-                  setEditingProfileId(item.id);
-                  setProfile({ ...emptyProfile, ...item });
+            <Sidebar
+                section={section}
+                onSection={setSection}
+                counts={{
+                  profiles: profiles.length,
+                  projects: projects.length,
+                  skills: skills.length,
+                  unread: newUnread,
+                  posts: postCount,
                 }}
-                onReload={load}
-                emptyForm={emptyProfile}
-                setEditingId={setEditingProfileId}
-              />
-            )}
-            {section === "projects" && (
-              <ProjectsSection
-                projects={projects}
-                form={project}
-                editingId={editingProjectId}
-                onChange={setProject}
-                onSubmit={saveProject}
-                onEdit={(item) => {
-                  setEditingProjectId(item.id);
-                  setProject({
-                    ...emptyProject,
-                    ...item,
-                    images: (item as any).images || [],
-                    technologiesText: (item.technologies || []).join(", "),
-                  } as ProjectForm);
-                }}
-                onReload={load}
-                emptyForm={emptyProject}
-                setEditingId={setEditingProjectId}
-                onImageUploadingChange={setImageUploading}
-              />
-            )}
-            {section === "skills" && (
-              <SkillsSection
-                skills={skills}
-                form={skill}
-                editingId={editingSkillId}
-                onChange={setSkill}
-                onSubmit={saveSkill}
-                onEdit={(item) => {
-                  setEditingSkillId(item.id);
-                  setSkill({ ...emptySkill, ...item });
-                }}
-                onReload={load}
-                emptyForm={emptySkill}
-                setEditingId={setEditingSkillId}
-              />
-            )}
-            {section === "contacts" && (
-              <ContactsSection contacts={contacts} onReload={load} />
-            )}
+            />
+
+            <div className="flex-1 flex flex-col min-w-0">
+              <WorkspaceHeader section={section} />
+
+              {section === "profiles" && (
+                  <ProfilesSection
+                      profiles={profiles}
+                      form={profile}
+                      editingId={editingProfileId}
+                      onChange={setProfile}
+                      onSubmit={saveProfile}
+                      onEdit={(item) => {
+                        setEditingProfileId(item.id);
+                        setProfile({ ...emptyProfile, ...item });
+                      }}
+                      onReload={load}
+                      emptyForm={emptyProfile}
+                      setEditingId={setEditingProfileId}
+                  />
+              )}
+              {section === "projects" && (
+                  <ProjectsSection
+                      projects={projects}
+                      form={project}
+                      editingId={editingProjectId}
+                      onChange={setProject}
+                      onSubmit={saveProject}
+                      onEdit={(item) => {
+                        setEditingProjectId(item.id);
+                        setProject({
+                          ...emptyProject,
+                          ...item,
+                          images: (item as any).images || [],
+                          technologiesText: (item.technologies || []).join(", "),
+                        } as ProjectForm);
+                      }}
+                      onReload={load}
+                      emptyForm={emptyProject}
+                      setEditingId={setEditingProjectId}
+                      onImageUploadingChange={setImageUploading}
+                  />
+              )}
+              {section === "skills" && (
+                  <SkillsSection
+                      skills={skills}
+                      form={skill}
+                      editingId={editingSkillId}
+                      onChange={setSkill}
+                      onSubmit={saveSkill}
+                      onEdit={(item) => {
+                        setEditingSkillId(item.id);
+                        setSkill({ ...emptySkill, ...item });
+                      }}
+                      onReload={load}
+                      emptyForm={emptySkill}
+                      setEditingId={setEditingSkillId}
+                  />
+              )}
+              {section === "contacts" && (
+                  <ContactsSection contacts={contacts} onReload={load} />
+              )}
+            </div>
           </div>
         </div>
       </div>
-    </div>
   );
 }

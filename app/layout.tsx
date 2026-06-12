@@ -26,7 +26,7 @@ export const metadata: Metadata = {
   metadataBase: new URL("https://chien19.vercel.app"),
 
   title: {
-    default: "Nguyễn Đình Chiến | Frontend Developer",
+    default: "Nguyễn Đình Chiến - Frontend Developer",
     template: "%s | Nguyễn Đình Chiến",
   },
 

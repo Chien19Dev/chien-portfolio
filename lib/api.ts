@@ -57,6 +57,11 @@ export type Post = {
   content: string;
   summary?: string | null;
   published: boolean;
+  coverImage?: string | null;
+  author?: string | null;
+  category?: string | null;
+  tags?: string[];
+  publishedAt?: string;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -115,6 +120,9 @@ export const api = {
       Omit<ContactMessage, "id" | "isRead">,
       Partial<ContactMessage>
   >("/contact"),
-  posts: crud<Post, Omit<Post, "id">, Partial<Post>>("/posts"),
+  posts: {
+    ...crud<Post, Omit<Post, "id">, Partial<Post>>("/posts"),
+    get: (id: string) => request<Post>(`/posts/${id}`),
+  },
   testimonials: crud<Testimonial, Omit<Testimonial, "id">, Partial<Testimonial>>("/testimonials"),
 };

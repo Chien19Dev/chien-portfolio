@@ -1,10 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+
+async function isAdmin() {
+    const session = await auth();
+    const adminEmail = process.env.ADMIN_EMAIL || process.env.NEXT_PUBLIC_ADMIN_EMAIL;
+    return session?.user && session.user.email === adminEmail;
+}
 
 export async function GET() {
     try {
         const posts = await prisma.post.findMany({
-            orderBy: { createdAt: 'desc' },
+            orderBy: { publishedAt: 'desc' },
         });
         return NextResponse.json(posts);
     } catch (error) {
@@ -18,9 +25,24 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
     try {
+        if (!(await isAdmin())) {
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
         const body = await request.json();
         const post = await prisma.post.create({
-            data: body,
+            data: {
+                title: body.title,
+                slug: body.slug,
+                content: body.content,
+                summary: body.summary || null,
+                published: !!body.published,
+                coverImage: body.coverImage || null,
+                author: body.author || 'Nguyễn Đình Chiến',
+                category: body.category || 'General',
+                tags: body.tags || [],
+                publishedAt: body.publishedAt ? new Date(body.publishedAt) : new Date(),
+            },
         });
         return NextResponse.json(post, { status: 201 });
     } catch (error) {

@@ -401,3 +401,116 @@ body {
     0 0 0 4px color-mix(in oklch, var(--primary) 22%, transparent),
     0 0 0 5px var(--border);
 }
+
+.blog-luxury-page {
+  background-color: var(--background);
+  background-image:
+    radial-gradient(
+      ellipse 120% 80% at 100% 0%,
+      color-mix(in oklch, var(--primary) 8%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 80% 60% at 0% 100%,
+      color-mix(in oklch, var(--primary) 5%, transparent),
+      transparent 50%
+    ),
+    linear-gradient(
+      color-mix(in srgb, var(--border) 25%, transparent) 0.5px,
+      transparent 0.5px
+    ),
+    linear-gradient(
+      90deg,
+      color-mix(in srgb, var(--border) 25%, transparent) 0.5px,
+      transparent 0.5px
+    );
+  background-size:
+    100% 100%,
+    100% 100%,
+    48px 48px,
+    48px 48px;
+}
+
+.blog-luxury-sidebar {
+  background: var(--card);
+  backdrop-filter: blur(12px);
+}
+
+.blog-luxury-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid color-mix(in oklch, var(--primary) 25%, var(--border));
+  background: var(--background);
+}
+
+.blog-luxury-input {
+  border-color: color-mix(in oklch, var(--border) 80%, var(--primary) 20%);
+  background: var(--background);
+}
+
+.blog-luxury-input:focus-visible {
+  border-color: color-mix(in oklch, var(--primary) 55%, var(--border));
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--primary) 15%, transparent);
+}
+
+.blog-luxury-skeleton {
+  background: linear-gradient(
+    110deg,
+    color-mix(in oklch, var(--muted) 40%, transparent) 30%,
+    color-mix(in oklch, var(--muted) 70%, transparent) 50%,
+    color-mix(in oklch, var(--muted) 40%, transparent) 70%
+  );
+  background-size: 200% 100%;
+}
+
+.blog-editor .ck.ck-editor {
+  width: 100%;
+}
+
+.blog-editor .ck.ck-editor__main > .ck-editor__editable {
+  min-height: var(--blog-editor-min-h, 420px);
+  background: var(--background) !important;
+  color: var(--foreground) !important;
+  border-color: color-mix(in oklch, var(--border) 80%, var(--primary) 15%) !important;
+  font-family: var(--font-sans), system-ui, sans-serif;
+  line-height: 1.75;
+  padding: 1.25rem 1.5rem !important;
+}
+
+.blog-editor .ck.ck-toolbar {
+  background: var(--card) !important;
+  border-color: color-mix(in oklch, var(--border) 80%, var(--primary) 15%) !important;
+}
+
+.blog-editor .ck.ck-toolbar .ck-button {
+  color: var(--foreground) !important;
+}
+
+.blog-editor .ck.ck-toolbar .ck-button:hover,
+.blog-editor .ck.ck-toolbar .ck-button.ck-on {
+  background: var(--card) !important;
+}
+
+.blog-editor .ck.ck-editor__editable:not(.ck-editor__nested-editable).ck-focused {
+  border-color: color-mix(in oklch, var(--primary) 45%, var(--border)) !important;
+  box-shadow: 0 0 0 2px color-mix(in oklch, var(--primary) 12%, transparent) !important;
+}
+
+.blog-editor .ck-content h2,
+.blog-editor .ck-content h3 {
+  font-family: var(--font-heading), var(--font-sans);
+  letter-spacing: 0.04em;
+}
+
+.dark .blog-editor .ck.ck-editor__main > .ck-editor__editable {
+  background: var(--card) !important;
+}
+
+.dark .blog-editor .ck.ck-toolbar {
+  background: var(--card) !important;
+}
+.ck-editor__main{
+  color:black !important;
+}
