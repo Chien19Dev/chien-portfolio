@@ -1,4 +1,4 @@
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Table,
@@ -12,6 +12,7 @@ import {
 export interface WsRow {
   key: string;
   cells: React.ReactNode[];
+  onView?: () => void;
   onEdit: () => void;
   onDelete: () => void;
 }
@@ -58,6 +59,16 @@ export function WsTable({ cols, rows }: { cols: string[]; rows: WsRow[] }) {
 
             <TableCell className="px-3 py-3">
               <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
+                {row.onView && (
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={row.onView}
+                    aria-label="Xem chi tiết"
+                  >
+                    <Eye className="size-3.5" />
+                  </Button>
+                )}
                 <Button
                   size="icon-sm"
                   variant="ghost"

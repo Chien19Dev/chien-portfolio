@@ -17,6 +17,7 @@ import { Label } from "@/components/ui/label";
 type ProfileForm = Omit<Profile, "id" | "createdAt" | "updatedAt">;
 type ProjectForm = Omit<Project, "id" | "createdAt" | "updatedAt"> & {
   technologiesText: string;
+  images: string[];
 };
 type SkillForm = Omit<Skill, "id" | "createdAt" | "updatedAt">;
 
@@ -35,7 +36,7 @@ const emptyProfile: ProfileForm = {
 const emptyProject: ProjectForm = {
   title: "",
   description: "",
-  image: "",
+  images: [],
   githubUrl: "",
   demoUrl: "",
   technologies: [],
@@ -59,6 +60,7 @@ export default function AdminPage() {
   const [profile, setProfile] = useState<ProfileForm>(emptyProfile);
   const [project, setProject] = useState<ProjectForm>(emptyProject);
   const [skill, setSkill] = useState<SkillForm>(emptySkill);
+  const [imageUploading, setImageUploading] = useState(false);
 
   const [editingProfileId, setEditingProfileId] = useState("");
   const [editingProjectId, setEditingProjectId] = useState("");
@@ -101,6 +103,12 @@ export default function AdminPage() {
 
   async function saveProject(e: FormEvent) {
     e.preventDefault();
+    
+    if (imageUploading) {
+      alertError("Đang tải ảnh lên, vui lòng đợi...");
+      return;
+    }
+    
     const payload = {
       ...project,
       technologies: project.technologiesText
@@ -217,12 +225,14 @@ export default function AdminPage() {
                   setProject({
                     ...emptyProject,
                     ...item,
+                    images: (item as any).images || [],
                     technologiesText: (item.technologies || []).join(", "),
-                  });
+                  } as ProjectForm);
                 }}
                 onReload={load}
                 emptyForm={emptyProject}
                 setEditingId={setEditingProjectId}
+                onImageUploadingChange={setImageUploading}
               />
             )}
             {section === "skills" && (

@@ -1,8 +1,10 @@
 "use client";
 
+import { useState } from "react";
 import { motion } from "framer-motion";
-import { ExternalLink, Link } from "lucide-react";
+import { ExternalLink, Eye, Link } from "lucide-react";
 import { Project } from "@/lib/api";
+import { ProjectDetailDialog } from "@/components/sections/pages/project-detail-dialog";
 import { fadeEase } from "@/lib/motion";
 import { DecoFrame } from "@/components/sections/deco-frame";
 import { Badge } from "@/components/ui/badge";
@@ -18,6 +20,8 @@ interface ProjectsSectionProps {
 }
 
 export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
+  const [detailProject, setDetailProject] = useState<Project | null>(null);
+
   return (
     <section id="projects">
       <SectionHeading label="Tác phẩm" title="Dự án" className="mb-8" />
@@ -43,8 +47,8 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                   <div
                     className="aspect-video border-b border-border bg-muted bg-cover bg-center"
                     style={{
-                      backgroundImage: project.image
-                        ? `url(${project.image})`
+                      backgroundImage: project.images && project.images.length > 0
+                        ? `url(${project.images[0]})`
                         : undefined,
                     }}
                   />
@@ -62,7 +66,14 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
                         </Badge>
                       ))}
                     </div>
-                    <div className="flex gap-2 pt-1">
+                    <div className="flex flex-wrap gap-2 pt-1">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => setDetailProject(project)}
+                      >
+                        Chi tiết <Eye />
+                      </Button>
                       {project.demoUrl && (
                         <Button
                           size="sm"
@@ -98,6 +109,14 @@ export function ProjectsSection({ projects, loading }: ProjectsSectionProps) {
               </MotionDiv>
             ))}
       </div>
+
+      <ProjectDetailDialog
+        project={detailProject}
+        open={detailProject !== null}
+        onOpenChange={(open) => {
+          if (!open) setDetailProject(null);
+        }}
+      />
     </section>
   );
 }

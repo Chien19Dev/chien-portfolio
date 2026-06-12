@@ -1,4 +1,5 @@
 import type { FormEvent } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
@@ -8,10 +9,13 @@ import { WorkspaceSplit } from "@/components/admin/workspace-split";
 import { WsField } from "@/components/admin/ws-field";
 import { WsSubmit } from "@/components/admin/ws-submit";
 import { WsTable } from "@/components/admin/ws-table";
+import { Pattern } from "@/components/upload-file";
+import { ProjectDetailDialog } from "@/components/sections/pages/project-detail-dialog";
 
 
 type ProjectForm = Omit<Project, "id" | "createdAt" | "updatedAt"> & {
   technologiesText: string;
+  images: string[];
 };
 
 interface Props {
@@ -24,6 +28,7 @@ interface Props {
   onReload: () => void;
   emptyForm: ProjectForm;
   setEditingId: (id: string) => void;
+  onImageUploadingChange?: (isUploading: boolean) => void;
 }
 
 export function ProjectsSection({
@@ -36,8 +41,12 @@ export function ProjectsSection({
   onReload,
   emptyForm,
   setEditingId,
+  onImageUploadingChange,
 }: Props) {
+  const [detailProject, setDetailProject] = useState<Project | null>(null);
+
   return (
+    <>
     <WorkspaceSplit
       form={
         <form onSubmit={onSubmit} className="space-y-2">
@@ -58,10 +67,14 @@ export function ProjectsSection({
               rows={3}
             />
           </WsField>
-          <WsField label="Ảnh (URL)">
-            <Input
-              value={form.image || ""}
-              onChange={(e) => onChange({ ...form, image: e.target.value })}
+          <WsField label="Ảnh dự án">
+            <Pattern
+              maxSize={5 * 1024 * 1024}
+              accept="image/*"
+              multiple={true}
+              value={form.images}
+              onUploadComplete={(urls) => onChange({ ...form, images: urls })}
+              onUploadingChange={onImageUploadingChange}
             />
           </WsField>
           <WsField label="Công nghệ (phân cách bằng dấu phẩy)">
@@ -72,16 +85,18 @@ export function ProjectsSection({
               }
             />
           </WsField>
-          <WsField label="GitHub URL">
+          <WsField label="GitHub URL (tùy chọn)">
             <Input
               value={form.githubUrl || ""}
               onChange={(e) => onChange({ ...form, githubUrl: e.target.value })}
+              placeholder="https://github.com/username/repo"
             />
           </WsField>
-          <WsField label="Demo URL">
+          <WsField label="Demo URL (tùy chọn)">
             <Input
               value={form.demoUrl || ""}
               onChange={(e) => onChange({ ...form, demoUrl: e.target.value })}
+              placeholder="https://your-project-demo.com"
             />
           </WsField>
           <WsSubmit
@@ -120,6 +135,7 @@ export function ProjectsSection({
                 )}
               </div>,
             ],
+            onView: () => setDetailProject(item),
             onEdit: () => onEdit(item),
             onDelete: async () => {
               try {
@@ -134,5 +150,14 @@ export function ProjectsSection({
         />
       }
     />
+
+    <ProjectDetailDialog
+      project={detailProject}
+      open={detailProject !== null}
+      onOpenChange={(open) => {
+        if (!open) setDetailProject(null);
+      }}
+    />
+    </>
   );
 }
