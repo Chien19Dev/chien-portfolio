@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Home,
   LayoutDashboard,
@@ -9,6 +9,8 @@ import {
   LogIn,
   LogOut,
   User,
+  FileText,
+  Upload,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,9 +28,58 @@ const navLinks = [
 
 export default function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [cvExists, setCvExists] = useState(false);
+  const [showUploadDialog, setShowUploadDialog] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const router = useRouter();
   const { data: session, status, update } = useSession();
   const isAdmin = session?.user?.email === ADMIN_EMAIL;
+
+  useEffect(() => {
+    fetch('/api/profile/cv')
+      .then(res => res.json())
+      .then(data => {
+        if (data.cvUrl) {
+          setCvExists(true);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  const handleCvUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploading(true);
+    const formData = new FormData();
+    formData.append('cv', file);
+
+    try {
+      const res = await fetch('/api/profile/cv', {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (res.ok) {
+        setCvExists(true);
+        setShowUploadDialog(false);
+      } else {
+        alert('Failed to upload CV');
+      }
+    } catch (error) {
+      alert('Failed to upload CV');
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const handleViewCv = async () => {
+    try {
+      window.open('/cv', '_blank');
+    } catch (error) {
+      alert('Failed to view CV');
+    }
+  };
 
   const visibleNavLinks = navLinks.filter(
     (link) => link.href !== "/admin" || isAdmin,
@@ -61,6 +112,38 @@ export default function Navbar() {
                 <span>{label}</span>
               </Link>
             ))}
+            {cvExists ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleViewCv}
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Xem CV</span>
+              </Button>
+            ) : isAdmin ? (
+              <>
+                <input
+                  type="file"
+                  id="cv-upload-desktop"
+                  accept=".pdf"
+                  onChange={handleCvUpload}
+                  className="hidden"
+                  disabled={uploading}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => document.getElementById('cv-upload-desktop')?.click()}
+                  disabled={uploading}
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Upload className="h-4 w-4" />
+                  <span>{uploading ? 'Đang tải...' : 'Tải CV lên'}</span>
+                </Button>
+              </>
+            ) : null}
             {status === "loading" ? null : session ? (
               <Button
                 variant="ghost"
@@ -117,6 +200,44 @@ export default function Navbar() {
                 <span>{label}</span>
               </Link>
             ))}
+            {cvExists ? (
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => {
+                  handleViewCv();
+                  setMobileMenuOpen(false);
+                }}
+                className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+              >
+                <FileText className="h-4 w-4" />
+                <span>Xem CV</span>
+              </Button>
+            ) : isAdmin ? (
+              <>
+                <input
+                  type="file"
+                  id="cv-upload-mobile"
+                  accept=".pdf"
+                  onChange={(e) => {
+                    handleCvUpload(e);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="hidden"
+                  disabled={uploading}
+                />
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => document.getElementById('cv-upload-mobile')?.click()}
+                  disabled={uploading}
+                  className="flex items-center gap-2 text-sm font-medium text-muted-foreground transition-colors hover:text-primary"
+                >
+                  <Upload className="h-4 w-4" />
+                  <span>{uploading ? 'Đang tải...' : 'Tải CV lên'}</span>
+                </Button>
+              </>
+            ) : null}
             {status === "loading" ? null : session ? (
               <Button
                 variant="ghost"
