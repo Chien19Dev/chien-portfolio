@@ -37,7 +37,7 @@ export function HomePage({
 
   return (
     <div className="deco-page relative">
-      <div className="relative z-10 container mx-auto px-4 py-4 md:py-8">
+      <div className="relative z-10 container mx-auto px-4 py-4 md:py-8 max-w-330">
         <div className="grid items-stretch gap-6 md:grid-cols-12">
           <div className="md:col-span-5">
             <MotionDiv {...fadeUp} className="h-full">

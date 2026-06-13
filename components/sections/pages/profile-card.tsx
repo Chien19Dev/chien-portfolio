@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { ProfileSkeleton } from "./profile-skeleton";
 import { ProfileContactItem } from "./profile-contact-item";
+import { Label } from "@/components/ui/label";
 
 interface ProfileCardProps {
   profile: Profile | null;
@@ -34,9 +35,9 @@ export function ProfileCard({ profile, initials, loading }: ProfileCardProps) {
           </Avatar>
           <div>
             <p className="deco-eyebrow mb-2">Giới thiệu</p>
-            <h2 className="deco-title text-4xl md:text-5xl text-foreground">
+            <Label className="deco-title text-3xl md:text-4xl text-foreground">
               {profile?.fullName || "Hồ sơ của bạn"}
-            </h2>
+            </Label>
             <p className="mt-3 text-lg text-primary font-medium tracking-wide">
               {profile?.title || "Fullstack Developer"}
             </p>

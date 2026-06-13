@@ -121,7 +121,7 @@ export function AdminTestimonialsSection({
               </div>,
               <p
                 key="content"
-                className="text-xs text-muted-foreground line-clamp-2 max-w-[220px]"
+                className="text-xs text-muted-foreground line-clamp-2 max-w-55"
               >
                 {item.content}
               </p>,

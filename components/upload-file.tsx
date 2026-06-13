@@ -157,19 +157,19 @@ export function Pattern({
           </div>
 
           <div className="space-y-2">
-            <h3 className="text-lg font-semibold">Upload images to gallery</h3>
+            <h3 className="text-lg font-semibold">Tải hình ảnh lên thư viện</h3>
             <p className="text-muted-foreground text-sm">
-              Drag and drop images here or click to browse
+              Kéo và thả hình ảnh vào đây hoặc nhấp chuột để chọn.
             </p>
             <p className="text-muted-foreground text-xs">
-              PNG, JPG, GIF up to {formatBytes(maxSize)} each
+              PNG, JPG, GIF tối đa {formatBytes(maxSize)} mỗi file
               {maxFiles !== undefined ? ` (max ${maxFiles} files)` : ""}
             </p>
           </div>
 
           <Button onClick={openFileDialog}>
             <Upload className="h-4 w-4" />
-            Select images
+            Chọn hình ảnh
           </Button>
         </div>
       </div>
@@ -177,7 +177,7 @@ export function Pattern({
         <div className="mt-6 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <h4 className="text-sm font-medium">
-              Gallery ({imageUrls.length + files.length}
+              Thư viện ({imageUrls.length + files.length}
               {maxFiles !== undefined ? `/${maxFiles}` : ""})
             </h4>
             <div className="text-muted-foreground text-xs">
@@ -316,7 +316,7 @@ export function Pattern({
         open={!!selectedImage}
         onOpenChange={(open) => !open && setSelectedImage(null)}
       >
-        <DialogContent className="[&_[data-slot=dialog-close]]:text-muted-foreground [&_[data-slot=dialog-close]]:hover:text-foreground [&_[data-slot=dialog-close]]:bg-background w-full border-none bg-transparent p-0 shadow-none sm:max-w-xl [&_[data-slot=dialog-close]]:-end-7 [&_[data-slot=dialog-close]]:-top-7 [&_[data-slot=dialog-close]]:size-7 [&_[data-slot=dialog-close]]:rounded-full">
+        <DialogContent className="**:data-[slot=dialog-close]:text-muted-foreground **:data-[slot=dialog-close]:hover:text-foreground **:data-[slot=dialog-close]:bg-background w-full border-none bg-transparent p-0 shadow-none sm:max-w-xl **:data-[slot=dialog-close]:-inset-e-7 **:data-[slot=dialog-close]:-top-7 **:data-[slot=dialog-close]:size-7 **:data-[slot=dialog-close]:rounded-full">
           <DialogHeader className="sr-only">
             <DialogTitle>Image Preview</DialogTitle>
           </DialogHeader>

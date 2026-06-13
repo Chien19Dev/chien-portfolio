@@ -9,7 +9,6 @@ import { WsField } from "@/components/admin/ws-field";
 import { WsSubmit } from "@/components/admin/ws-submit";
 import { WsTable } from "@/components/admin/ws-table";
 
-
 type ProfileForm = Omit<Profile, "id" | "createdAt" | "updatedAt">;
 
 const EXTRA_FIELDS: Record<string, string> = {

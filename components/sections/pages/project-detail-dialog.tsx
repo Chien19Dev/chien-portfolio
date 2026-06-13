@@ -51,9 +51,8 @@ export function ProjectDetailDialog({
     const onKeyDown = (e: KeyboardEvent) => {
       if (images.length <= 1) return;
       if (e.key === "ArrowLeft") {
-        setPreviewIndex(
-          (i) =>
-            i === null ? null : (i - 1 + images.length) % images.length,
+        setPreviewIndex((i) =>
+          i === null ? null : (i - 1 + images.length) % images.length,
         );
       }
       if (e.key === "ArrowRight") {
@@ -91,9 +90,7 @@ export function ProjectDetailDialog({
                       <button
                         key={url}
                         type="button"
-                        onClick={() =>
-                          setPreviewIndex(images.indexOf(url))
-                        }
+                        onClick={() => setPreviewIndex(images.indexOf(url))}
                         className="group relative aspect-square overflow-hidden rounded-lg border border-border"
                       >
                         <Image

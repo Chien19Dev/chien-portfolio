@@ -27,10 +27,7 @@ export default function NewBlogPostPage() {
   }
 
   return (
-    <BlogAdminShell
-      subtitle="Soạn thảo mới"
-      title="Viết bài viết"
-    >
+    <BlogAdminShell subtitle="Soạn thảo mới" title="Viết bài viết">
       <BlogPostEditor
         form={form}
         saving={saving}

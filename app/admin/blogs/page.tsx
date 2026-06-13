@@ -49,7 +49,7 @@ export default function BlogAdminPage() {
           {Array.from({ length: 3 }).map((_, i) => (
             <div
               key={i}
-              className="blog-luxury-skeleton aspect-[4/5] animate-pulse bg-muted/30 border border-border/40"
+              className="blog-luxury-skeleton aspect-4/5 animate-pulse bg-muted/30 border border-border/40"
             />
           ))}
         </div>

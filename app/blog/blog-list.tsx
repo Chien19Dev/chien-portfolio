@@ -98,12 +98,16 @@ export default async function BlogListPage() {
                                 <Calendar className="size-3.5" />
                                 {formattedDate}
                               </span>
-                              <span className="text-muted-foreground/30">•</span>
+                              <span className="text-muted-foreground/30">
+                                •
+                              </span>
                               <span className="flex items-center gap-1">
                                 <Clock className="size-3.5" />
                                 {readTime} phút đọc
                               </span>
-                              <span className="text-muted-foreground/30">•</span>
+                              <span className="text-muted-foreground/30">
+                                •
+                              </span>
                               <span className="flex items-center gap-1">
                                 <Tag className="size-3.5" />
                                 {post.category || "General"}

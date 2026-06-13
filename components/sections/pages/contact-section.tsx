@@ -21,7 +21,7 @@ export function ContactSection() {
 
   function field(key: keyof typeof emptyForm) {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-        setForm((prev) => ({ ...prev, [key]: e.target.value }));
+      setForm((prev) => ({ ...prev, [key]: e.target.value }));
   }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
@@ -54,12 +54,12 @@ export function ContactSection() {
       <form onSubmit={handleSubmit} className="mt-6 space-y-4">
         <div className="sr-only" aria-hidden="true">
           <input
-              type="text"
-              name="system_mail_honeypot"
-              value={honeypot}
-              onChange={(e) => setHoneypot(e.target.value)}
-              tabIndex={-1}
-              autoComplete="off"
+            type="text"
+            name="system_mail_honeypot"
+            value={honeypot}
+            onChange={(e) => setHoneypot(e.target.value)}
+            tabIndex={-1}
+            autoComplete="off"
           />
         </div>
         <div className="grid gap-4 md:grid-cols-2">

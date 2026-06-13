@@ -2,7 +2,14 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
-import { api, ContactMessage, Profile, Project, Skill, Testimonial } from "@/lib/api";
+import {
+  api,
+  ContactMessage,
+  Profile,
+  Project,
+  Skill,
+  Testimonial,
+} from "@/lib/api";
 import { alertSuccess, alertError } from "@/lib/alerts";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/types/types";
@@ -71,7 +78,8 @@ export default function AdminPage() {
   const [profile, setProfile] = useState<ProfileForm>(emptyProfile);
   const [project, setProject] = useState<ProjectForm>(emptyProject);
   const [skill, setSkill] = useState<SkillForm>(emptySkill);
-  const [testimonial, setTestimonial] = useState<TestimonialForm>(emptyTestimonial);
+  const [testimonial, setTestimonial] =
+    useState<TestimonialForm>(emptyTestimonial);
   const [imageUploading, setImageUploading] = useState(false);
 
   const [editingProfileId, setEditingProfileId] = useState("");
@@ -93,7 +101,8 @@ export default function AdminPage() {
     if (results[2].status === "fulfilled") setSkills(results[2].value);
     if (results[3].status === "fulfilled") setTestimonials(results[3].value);
     if (results[4].status === "fulfilled") setContacts(results[4].value);
-    if (results[5].status === "fulfilled") setPostCount(results[5].value.length);
+    if (results[5].status === "fulfilled")
+      setPostCount(results[5].value.length);
   }
 
   useEffect(() => {
@@ -129,9 +138,9 @@ export default function AdminPage() {
     const payload = {
       ...project,
       technologies: project.technologiesText
-          .split(",")
-          .map((t) => t.trim())
-          .filter(Boolean),
+        .split(",")
+        .map((t) => t.trim())
+        .filter(Boolean),
     };
     delete (payload as Partial<ProjectForm>).technologiesText;
     try {
@@ -205,123 +214,123 @@ export default function AdminPage() {
   const newUnread = contacts.filter((c) => !c.isRead).length;
 
   return (
-      <div className="deco-page relative min-h-screen">
-        <div className="relative z-10 container mx-auto px-4 py-4 md:py-8">
-          <div className="mb-8 flex items-start justify-between">
-            <div className="flex flex-col gap-1">
-              <Label className="deco-eyebrow mb-1.5">Bảng điều khiển</Label>
-              <Label className="deco-title text-4xl md:text-3xl text-foreground">
-                Quản trị
-              </Label>
-            </div>
-            <Button
-                variant="default"
-                size="lg"
-                onClick={load}
-                className="rounded-xs"
-            >
-              <RefreshCw className="size-3.5" />
-              Làm mới
-            </Button>
+    <div className="deco-page relative min-h-screen">
+      <div className="relative z-10 container mx-auto px-4 py-4 md:py-6 max-w-340">
+        <div className="mb-8 flex items-start justify-between">
+          <div className="flex flex-col gap-1">
+            <Label className="deco-eyebrow mb-1.5">Bảng điều khiển</Label>
+            <Label className="deco-title text-4xl md:text-3xl text-foreground">
+              Quản trị
+            </Label>
           </div>
-
-          <div
-              className="flex gap-0 border border-border overflow-hidden"
-              style={{ minHeight: "calc(100vh - 220px)" }}
+          <Button
+            variant="default"
+            size="lg"
+            onClick={load}
+            className="rounded-xs"
           >
-            <Sidebar
-                section={section}
-                onSection={setSection}
-                counts={{
-                  profiles: profiles.length,
-                  projects: projects.length,
-                  skills: skills.length,
-                  testimonials: testimonials.length,
-                  unread: newUnread,
-                  posts: postCount,
+            <RefreshCw className="size-3.5" />
+            Làm mới
+          </Button>
+        </div>
+
+        <div
+          className="flex gap-0 border border-border overflow-hidden"
+          style={{ minHeight: "calc(100vh - 220px)" }}
+        >
+          <Sidebar
+            section={section}
+            onSection={setSection}
+            counts={{
+              profiles: profiles.length,
+              projects: projects.length,
+              skills: skills.length,
+              testimonials: testimonials.length,
+              unread: newUnread,
+              posts: postCount,
+            }}
+          />
+
+          <div className="flex-1 flex flex-col min-w-0">
+            <WorkspaceHeader section={section} />
+
+            {section === "profiles" && (
+              <ProfilesSection
+                profiles={profiles}
+                form={profile}
+                editingId={editingProfileId}
+                onChange={setProfile}
+                onSubmit={saveProfile}
+                onEdit={(item) => {
+                  setEditingProfileId(item.id);
+                  setProfile({ ...emptyProfile, ...item });
                 }}
-            />
-
-            <div className="flex-1 flex flex-col min-w-0">
-              <WorkspaceHeader section={section} />
-
-              {section === "profiles" && (
-                  <ProfilesSection
-                      profiles={profiles}
-                      form={profile}
-                      editingId={editingProfileId}
-                      onChange={setProfile}
-                      onSubmit={saveProfile}
-                      onEdit={(item) => {
-                        setEditingProfileId(item.id);
-                        setProfile({ ...emptyProfile, ...item });
-                      }}
-                      onReload={load}
-                      emptyForm={emptyProfile}
-                      setEditingId={setEditingProfileId}
-                  />
-              )}
-              {section === "projects" && (
-                  <ProjectsSection
-                      projects={projects}
-                      form={project}
-                      editingId={editingProjectId}
-                      onChange={setProject}
-                      onSubmit={saveProject}
-                      onEdit={(item) => {
-                        setEditingProjectId(item.id);
-                        setProject({
-                          ...emptyProject,
-                          ...item,
-                          images: (item as any).images || [],
-                          technologiesText: (item.technologies || []).join(", "),
-                        } as ProjectForm);
-                      }}
-                      onReload={load}
-                      emptyForm={emptyProject}
-                      setEditingId={setEditingProjectId}
-                      onImageUploadingChange={setImageUploading}
-                  />
-              )}
-              {section === "skills" && (
-                  <SkillsSection
-                      skills={skills}
-                      form={skill}
-                      editingId={editingSkillId}
-                      onChange={setSkill}
-                      onSubmit={saveSkill}
-                      onEdit={(item) => {
-                        setEditingSkillId(item.id);
-                        setSkill({ ...emptySkill, ...item });
-                      }}
-                      onReload={load}
-                      emptyForm={emptySkill}
-                      setEditingId={setEditingSkillId}
-                  />
-              )}
-              {section === "testimonials" && (
-                  <AdminTestimonialsSection
-                      testimonials={testimonials}
-                      form={testimonial}
-                      editingId={editingTestimonialId}
-                      onChange={setTestimonial}
-                      onSubmit={saveTestimonial}
-                      onEdit={(item) => {
-                        setEditingTestimonialId(item.id);
-                        setTestimonial({ ...emptyTestimonial, ...item });
-                      }}
-                      onReload={load}
-                      emptyForm={emptyTestimonial}
-                      setEditingId={setEditingTestimonialId}
-                      onImageUploadingChange={setImageUploading}
-                  />
-              )}
-              {section === "contacts" && (
-                  <ContactsSection contacts={contacts} onReload={load} />
-              )}
-            </div>
+                onReload={load}
+                emptyForm={emptyProfile}
+                setEditingId={setEditingProfileId}
+              />
+            )}
+            {section === "projects" && (
+              <ProjectsSection
+                projects={projects}
+                form={project}
+                editingId={editingProjectId}
+                onChange={setProject}
+                onSubmit={saveProject}
+                onEdit={(item) => {
+                  setEditingProjectId(item.id);
+                  setProject({
+                    ...emptyProject,
+                    ...item,
+                    images: (item as any).images || [],
+                    technologiesText: (item.technologies || []).join(", "),
+                  } as ProjectForm);
+                }}
+                onReload={load}
+                emptyForm={emptyProject}
+                setEditingId={setEditingProjectId}
+                onImageUploadingChange={setImageUploading}
+              />
+            )}
+            {section === "skills" && (
+              <SkillsSection
+                skills={skills}
+                form={skill}
+                editingId={editingSkillId}
+                onChange={setSkill}
+                onSubmit={saveSkill}
+                onEdit={(item) => {
+                  setEditingSkillId(item.id);
+                  setSkill({ ...emptySkill, ...item });
+                }}
+                onReload={load}
+                emptyForm={emptySkill}
+                setEditingId={setEditingSkillId}
+              />
+            )}
+            {section === "testimonials" && (
+              <AdminTestimonialsSection
+                testimonials={testimonials}
+                form={testimonial}
+                editingId={editingTestimonialId}
+                onChange={setTestimonial}
+                onSubmit={saveTestimonial}
+                onEdit={(item) => {
+                  setEditingTestimonialId(item.id);
+                  setTestimonial({ ...emptyTestimonial, ...item });
+                }}
+                onReload={load}
+                emptyForm={emptyTestimonial}
+                setEditingId={setEditingTestimonialId}
+                onImageUploadingChange={setImageUploading}
+              />
+            )}
+            {section === "contacts" && (
+              <ContactsSection contacts={contacts} onReload={load} />
+            )}
           </div>
         </div>
       </div>
+    </div>
   );
 }
