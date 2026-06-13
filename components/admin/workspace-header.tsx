@@ -4,6 +4,7 @@ const LABELS: Record<Section, string> = {
   profiles: "Hồ sơ cá nhân",
   projects: "Dự án",
   skills: "Kỹ năng",
+  testimonials: "Đánh giá",
   contacts: "Tin nhắn liên hệ",
   posts: "Bài viết (Blog)",
 };

@@ -1,1 +1,7 @@
-export type Section = "profiles" | "projects" | "skills" | "contacts" | "posts";
+export type Section =
+  | "profiles"
+  | "projects"
+  | "skills"
+  | "testimonials"
+  | "contacts"
+  | "posts";

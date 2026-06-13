@@ -15,6 +15,7 @@ interface SidebarProps {
     profiles: number;
     projects: number;
     skills: number;
+    testimonials: number;
     unread: number;
     posts: number;
   };
@@ -29,6 +30,7 @@ const NAV_ITEMS: {
   { id: "profiles", label: "Hồ sơ", countKey: "profiles" },
   { id: "projects", label: "Dự án", countKey: "projects" },
   { id: "skills", label: "Kỹ năng", countKey: "skills" },
+  { id: "testimonials", label: "Đánh giá", countKey: "testimonials" },
   { id: "posts", label: "Blog", countKey: "posts", href: "/admin/blogs" },
 ];
 
@@ -101,7 +103,7 @@ export function Sidebar({ section, onSection, counts }: SidebarProps) {
             { n: counts.profiles, l: "Hồ sơ" },
             { n: counts.projects, l: "Dự án" },
             { n: counts.skills, l: "Kỹ năng" },
-            { n: counts.posts, l: "Blog" },
+            { n: counts.testimonials, l: "Đánh giá" },
           ].map(({ n, l }) => (
               <div key={l} className="bg-background/70 px-3 py-2">
                 <p className="text-lg font-medium leading-none tabular-nums">{n}</p>

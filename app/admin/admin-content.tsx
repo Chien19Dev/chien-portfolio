@@ -2,7 +2,7 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { RefreshCw } from "lucide-react";
-import { api, ContactMessage, Profile, Project, Skill } from "@/lib/api";
+import { api, ContactMessage, Profile, Project, Skill, Testimonial } from "@/lib/api";
 import { alertSuccess, alertError } from "@/lib/alerts";
 import { Button } from "@/components/ui/button";
 import { Section } from "@/types/types";
@@ -12,6 +12,7 @@ import { ProfilesSection } from "@/components/sections/admin/admin-profiles-sect
 import { ProjectsSection } from "@/components/sections/admin/admin-projects-section";
 import { SkillsSection } from "@/components/sections/admin/admin-skills-section";
 import { ContactsSection } from "@/components/sections/admin/admin-contacts-section";
+import { AdminTestimonialsSection } from "@/components/sections/admin/admin-testimonials-section";
 import { Label } from "@/components/ui/label";
 
 type ProfileForm = Omit<Profile, "id" | "createdAt" | "updatedAt">;
@@ -20,6 +21,7 @@ type ProjectForm = Omit<Project, "id" | "createdAt" | "updatedAt"> & {
   images: string[];
 };
 type SkillForm = Omit<Skill, "id" | "createdAt" | "updatedAt">;
+type TestimonialForm = Omit<Testimonial, "id" | "createdAt" | "updatedAt">;
 
 const emptyProfile: ProfileForm = {
   fullName: "",
@@ -49,37 +51,49 @@ const emptySkill: SkillForm = {
   level: 0,
   order: 0,
 };
+const emptyTestimonial: TestimonialForm = {
+  authorName: "",
+  authorTitle: "",
+  content: "",
+  avatar: "",
+  order: 0,
+};
 
 export default function AdminPage() {
   const [section, setSection] = useState<Section>("profiles");
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([]);
   const [contacts, setContacts] = useState<ContactMessage[]>([]);
   const [postCount, setPostCount] = useState(0);
 
   const [profile, setProfile] = useState<ProfileForm>(emptyProfile);
   const [project, setProject] = useState<ProjectForm>(emptyProject);
   const [skill, setSkill] = useState<SkillForm>(emptySkill);
+  const [testimonial, setTestimonial] = useState<TestimonialForm>(emptyTestimonial);
   const [imageUploading, setImageUploading] = useState(false);
 
   const [editingProfileId, setEditingProfileId] = useState("");
   const [editingProjectId, setEditingProjectId] = useState("");
   const [editingSkillId, setEditingSkillId] = useState("");
+  const [editingTestimonialId, setEditingTestimonialId] = useState("");
 
   async function load() {
     const results = await Promise.allSettled([
       api.profiles.list(),
       api.projects.list(),
       api.skills.list(),
+      api.testimonials.list(),
       api.contacts.list(),
       api.posts.list(),
     ]);
     if (results[0].status === "fulfilled") setProfiles(results[0].value);
     if (results[1].status === "fulfilled") setProjects(results[1].value);
     if (results[2].status === "fulfilled") setSkills(results[2].value);
-    if (results[3].status === "fulfilled") setContacts(results[3].value);
-    if (results[4].status === "fulfilled") setPostCount(results[4].value.length);
+    if (results[3].status === "fulfilled") setTestimonials(results[3].value);
+    if (results[4].status === "fulfilled") setContacts(results[4].value);
+    if (results[5].status === "fulfilled") setPostCount(results[5].value.length);
   }
 
   useEffect(() => {
@@ -159,6 +173,35 @@ export default function AdminPage() {
     }
   }
 
+  async function saveTestimonial(e: FormEvent) {
+    e.preventDefault();
+
+    if (imageUploading) {
+      alertError("Đang tải ảnh lên, vui lòng đợi...");
+      return;
+    }
+
+    const payload = {
+      ...testimonial,
+      order: Number(testimonial.order || 0),
+    };
+
+    try {
+      if (editingTestimonialId) {
+        await api.testimonials.update(editingTestimonialId, payload);
+        alertSuccess("Đã cập nhật đánh giá");
+      } else {
+        await api.testimonials.create(payload);
+        alertSuccess("Đã thêm đánh giá");
+      }
+      setTestimonial(emptyTestimonial);
+      setEditingTestimonialId("");
+      await load();
+    } catch {
+      alertError("Có lỗi xảy ra khi lưu đánh giá");
+    }
+  }
+
   const newUnread = contacts.filter((c) => !c.isRead).length;
 
   return (
@@ -193,6 +236,7 @@ export default function AdminPage() {
                   profiles: profiles.length,
                   projects: projects.length,
                   skills: skills.length,
+                  testimonials: testimonials.length,
                   unread: newUnread,
                   posts: postCount,
                 }}
@@ -253,6 +297,23 @@ export default function AdminPage() {
                       onReload={load}
                       emptyForm={emptySkill}
                       setEditingId={setEditingSkillId}
+                  />
+              )}
+              {section === "testimonials" && (
+                  <AdminTestimonialsSection
+                      testimonials={testimonials}
+                      form={testimonial}
+                      editingId={editingTestimonialId}
+                      onChange={setTestimonial}
+                      onSubmit={saveTestimonial}
+                      onEdit={(item) => {
+                        setEditingTestimonialId(item.id);
+                        setTestimonial({ ...emptyTestimonial, ...item });
+                      }}
+                      onReload={load}
+                      emptyForm={emptyTestimonial}
+                      setEditingId={setEditingTestimonialId}
+                      onImageUploadingChange={setImageUploading}
                   />
               )}
               {section === "contacts" && (

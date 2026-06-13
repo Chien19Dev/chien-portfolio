@@ -1,6 +1,6 @@
 ﻿"use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
   Home,
   LayoutDashboard,
@@ -27,24 +27,17 @@ const navLinks = [
   { href: "/admin", label: "Quản trị", icon: LayoutDashboard },
 ];
 
-export default function Navbar() {
+interface NavbarProps {
+  cvExistsInitial?: boolean;
+}
+
+export default function Navbar({ cvExistsInitial = false }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [cvExists, setCvExists] = useState(false);
+  const [cvExists, setCvExists] = useState(cvExistsInitial);
   const [uploading, setUploading] = useState(false);
   const router = useRouter();
   const { data: session, status } = useSession();
   const isAdmin = session?.user?.email === ADMIN_EMAIL;
-
-  useEffect(() => {
-    fetch('/api/profile/cv')
-        .then(res => res.json())
-        .then(data => {
-          if (data.cvUrl) {
-            setCvExists(true);
-          }
-        })
-        .catch(() => {});
-  }, []);
 
   const handleCvUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];

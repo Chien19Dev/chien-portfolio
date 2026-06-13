@@ -6,6 +6,7 @@ import Navbar from "@/components/sections/navbar";
 import { ThemeProvider } from "@/components/theme-provider";
 import { SessionProvider } from "next-auth/react";
 import { Toaster } from "sonner";
+import { getCvExists } from "@/lib/data";
 
 const geistSans = Geist({
   subsets: ["latin"],
@@ -98,11 +99,13 @@ export const metadata: Metadata = {
   category: "technology",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cvExists = await getCvExists();
+
   return (
     <html
       lang="vi"
@@ -123,7 +126,7 @@ export default function RootLayout({
               closeButton={true}
               expand={false}
             />
-            <Navbar />
+            <Navbar cvExistsInitial={cvExists} />
             {children}
             <Analytics />
           </ThemeProvider>
