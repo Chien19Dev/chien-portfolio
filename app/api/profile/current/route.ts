@@ -1,10 +1,10 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET() {
   try {
     const profile = await prisma.profile.findFirst({
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: "desc" },
       select: {
         id: true,
         fullName: true,
@@ -23,10 +23,10 @@ export async function GET() {
     });
     return NextResponse.json(profile || null);
   } catch (error) {
-    console.error('Error fetching current profile:', error);
+    console.error("Error fetching current profile:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch current profile' },
-      { status: 500 }
+      { error: "Failed to fetch current profile" },
+      { status: 500 },
     );
   }
 }

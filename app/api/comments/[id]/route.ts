@@ -20,10 +20,7 @@ export async function DELETE(
     });
 
     if (!comment) {
-      return NextResponse.json(
-        { error: "Comment not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Comment not found" }, { status: 404 });
     }
 
     const isAdmin = session.user.role === "ADMIN";

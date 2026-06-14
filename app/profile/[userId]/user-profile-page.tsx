@@ -22,7 +22,13 @@ export default function UserProfilePage() {
     bio: string | null;
     image: string | null;
     createdAt: string;
-    _count?: { comments: number; likes: number; bookmarks: number; following: number; followers: number };
+    _count?: {
+      comments: number;
+      likes: number;
+      bookmarks: number;
+      following: number;
+      followers: number;
+    };
   } | null>(null);
   const [loading, setLoading] = useState(true);
   const [isFollowing, setIsFollowing] = useState(false);
@@ -97,7 +103,9 @@ export default function UserProfilePage() {
                 </h1>
                 <p className="text-sm text-muted-foreground">{user.email}</p>
                 {user.bio && (
-                  <p className="text-sm text-muted-foreground mt-1">{user.bio}</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    {user.bio}
+                  </p>
                 )}
                 <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
                   <Calendar className="size-3" />
@@ -147,7 +155,9 @@ export default function UserProfilePage() {
                 },
               ].map((stat) => (
                 <div key={stat.label} className="text-center">
-                  <p className="text-lg font-medium tabular-nums">{stat.count}</p>
+                  <p className="text-lg font-medium tabular-nums">
+                    {stat.count}
+                  </p>
                   <p className="text-xs text-muted-foreground">{stat.label}</p>
                 </div>
               ))}

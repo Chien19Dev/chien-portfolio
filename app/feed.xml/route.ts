@@ -11,7 +11,14 @@ export async function GET() {
       const { prisma } = await import("@/lib/prisma");
       const fullPost = await prisma.post.findUnique({
         where: { id: p.slug },
-        select: { title: true, slug: true, summary: true, author: true, publishedAt: true, content: true },
+        select: {
+          title: true,
+          slug: true,
+          summary: true,
+          author: true,
+          publishedAt: true,
+          content: true,
+        },
       });
       return fullPost;
     }),

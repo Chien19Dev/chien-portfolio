@@ -20,13 +20,17 @@ export async function GET(request: NextRequest) {
     if (type === "followers") {
       const followers = await prisma.userFollow.findMany({
         where: { followingId: userId },
-        include: { follower: { select: { id: true, name: true, image: true } } },
+        include: {
+          follower: { select: { id: true, name: true, image: true } },
+        },
       });
       return NextResponse.json(followers);
     } else {
       const following = await prisma.userFollow.findMany({
         where: { followerId: userId },
-        include: { following: { select: { id: true, name: true, image: true } } },
+        include: {
+          following: { select: { id: true, name: true, image: true } },
+        },
       });
       return NextResponse.json(following);
     }

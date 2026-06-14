@@ -24,10 +24,7 @@ function isAdminMutation(pathname: string, method: string) {
 
 function isAdminRead(pathname: string, method: string) {
   if (method !== "GET") return false;
-  return (
-    pathname === "/api/contact" ||
-    pathname === "/api/profile"
-  );
+  return pathname === "/api/contact" || pathname === "/api/profile";
 }
 
 export default auth((req) => {

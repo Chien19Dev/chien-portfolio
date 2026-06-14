@@ -14,7 +14,6 @@ export async function GET() {
 
   const stream = new ReadableStream({
     async start(controller) {
-      // Send initial unread count
       async function sendUpdate() {
         try {
           const unreadCount = await prisma.notification.count({
@@ -22,25 +21,17 @@ export async function GET() {
           });
           const data = `data: ${JSON.stringify({ unreadCount })}\n\n`;
           controller.enqueue(encoder.encode(data));
-        } catch {
-          // DB error, skip this update
-        }
+        } catch {}
       }
 
       await sendUpdate();
-
-      // Poll every 5 seconds for new notifications
       const interval = setInterval(async () => {
         await sendUpdate();
       }, 5000);
-
-      // Clean up on close
       const closeHandler = () => {
         clearInterval(interval);
         controller.close();
       };
-
-      // Keep connection alive with a heartbeat every 30 seconds
       const heartbeat = setInterval(() => {
         try {
           controller.enqueue(encoder.encode(": heartbeat\n\n"));
@@ -49,13 +40,14 @@ export async function GET() {
           clearInterval(interval);
         }
       }, 30000);
-
-      // Close after 5 minutes to prevent memory leaks
-      setTimeout(() => {
-        clearInterval(interval);
-        clearInterval(heartbeat);
-        closeHandler();
-      }, 5 * 60 * 1000);
+      setTimeout(
+        () => {
+          clearInterval(interval);
+          clearInterval(heartbeat);
+          closeHandler();
+        },
+        5 * 60 * 1000,
+      );
     },
   });
 

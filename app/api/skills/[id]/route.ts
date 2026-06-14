@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from "next/server";
+import { prisma } from "@/lib/prisma";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -11,21 +11,21 @@ export async function GET(
       where: { id },
     });
     if (!skill) {
-      return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
+      return NextResponse.json({ error: "Skill not found" }, { status: 404 });
     }
     return NextResponse.json(skill);
   } catch (error) {
-    console.error('Error fetching skill:', error);
+    console.error("Error fetching skill:", error);
     return NextResponse.json(
-      { error: 'Failed to fetch skill' },
-      { status: 500 }
+      { error: "Failed to fetch skill" },
+      { status: 500 },
     );
   }
 }
 
 export async function PATCH(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -36,17 +36,17 @@ export async function PATCH(
     });
     return NextResponse.json(skill);
   } catch (error) {
-    console.error('Error updating skill:', error);
+    console.error("Error updating skill:", error);
     return NextResponse.json(
-      { error: 'Failed to update skill' },
-      { status: 500 }
+      { error: "Failed to update skill" },
+      { status: 500 },
     );
   }
 }
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
@@ -55,10 +55,10 @@ export async function DELETE(
     });
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error('Error deleting skill:', error);
+    console.error("Error deleting skill:", error);
     return NextResponse.json(
-      { error: 'Failed to delete skill' },
-      { status: 500 }
+      { error: "Failed to delete skill" },
+      { status: 500 },
     );
   }
 }

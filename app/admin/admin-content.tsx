@@ -234,15 +234,15 @@ export default function AdminPage() {
           </div>
           <div className="flex items-center gap-2 flex-cols">
             <Button
-            variant="default"
-            size="lg"
-            onClick={load}
-            className="rounded-xs"
-          >
-            <RefreshCw className="size-3.5" />
-            Làm mới
-          </Button>
-          <NotificationBell />
+              variant="default"
+              size="lg"
+              onClick={load}
+              className="rounded-xs"
+            >
+              <RefreshCw className="size-3.5" />
+              Làm mới
+            </Button>
+            <NotificationBell />
           </div>
         </div>
 

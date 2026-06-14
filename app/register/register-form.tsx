@@ -145,11 +145,7 @@ export default function RegisterForm() {
               </div>
             </div>
 
-            <Button
-              type="submit"
-              className="w-full"
-              disabled={loading}
-            >
+            <Button type="submit" className="w-full" disabled={loading}>
               {loading ? "Đang đăng ký..." : "Đăng ký"}
             </Button>
           </form>

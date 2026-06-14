@@ -26,10 +26,7 @@ export async function POST(
     });
 
     if (!contact) {
-      return NextResponse.json(
-        { error: "Contact not found" },
-        { status: 404 },
-      );
+      return NextResponse.json({ error: "Contact not found" }, { status: 404 });
     }
 
     const reply = await prisma.contactReply.create({

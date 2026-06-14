@@ -48,9 +48,6 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ posts, projects });
   } catch (error) {
     console.error("Error searching:", error);
-    return NextResponse.json(
-      { error: "Failed to search" },
-      { status: 500 },
-    );
+    return NextResponse.json({ error: "Failed to search" }, { status: 500 });
   }
 }

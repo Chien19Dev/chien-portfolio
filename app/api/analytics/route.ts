@@ -12,21 +12,15 @@ export async function GET() {
     const now = new Date();
     const thirtyDaysAgo = new Date(now.getTime() - 30 * 24 * 60 * 60 * 1000);
     const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-
-    // Total views (30 days)
     const totalViews = await prisma.pageView.count({
       where: { createdAt: { gte: thirtyDaysAgo } },
     });
-
-    // Unique visitors (30 days, by IP)
     const uniqueVisitorsResult = await prisma.pageView.groupBy({
       by: ["ip"],
       where: { createdAt: { gte: thirtyDaysAgo }, ip: { not: null } },
       _count: true,
     });
     const uniqueVisitors = uniqueVisitorsResult.length;
-
-    // Top pages (30 days)
     const topPagesRaw = await prisma.pageView.groupBy({
       by: ["path"],
       where: { createdAt: { gte: thirtyDaysAgo } },
@@ -38,8 +32,6 @@ export async function GET() {
       path: p.path,
       count: p._count.path,
     }));
-
-    // Views over time (last 7 days, grouped by day)
     const viewsRaw = await prisma.pageView.findMany({
       where: { createdAt: { gte: sevenDaysAgo } },
       select: { createdAt: true },
@@ -55,8 +47,6 @@ export async function GET() {
     const viewsOverTime = Object.entries(viewsByDay)
       .sort(([a], [b]) => a.localeCompare(b))
       .map(([date, count]) => ({ date, count }));
-
-    // Referrers (top 10)
     const referrersRaw = await prisma.pageView.groupBy({
       by: ["referrer"],
       where: {
@@ -71,8 +61,6 @@ export async function GET() {
       referrer: r.referrer || "(direct)",
       count: r._count.referrer,
     }));
-
-    // Countries (top 10)
     const countriesRaw = await prisma.pageView.groupBy({
       by: ["country"],
       where: {
