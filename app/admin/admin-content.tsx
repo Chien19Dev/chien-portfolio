@@ -46,6 +46,8 @@ const emptyProfile: ProfileForm = {
   location: "",
   githubUrl: "",
   linkedinUrl: "",
+  twitterUrl: "",
+  instagramUrl: "",
   websiteUrl: "",
 };
 const emptyProject: ProjectForm = {

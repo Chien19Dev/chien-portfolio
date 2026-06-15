@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
+import Link from "next/link";
 import { Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
@@ -22,12 +23,13 @@ export function LikeButton({
   const { data: session } = useSession();
 
   useEffect(() => {
-    if (session) {
-      fetch(`/api/likes?postId=${postId}`)
-        .then((res) => res.json())
-        .then((data) => setLiked(data.liked))
-        .catch(() => {});
-    }
+    fetch(`/api/likes?postId=${postId}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (typeof data.count === "number") setCount(data.count);
+        if (session) setLiked(data.liked);
+      })
+      .catch(() => {});
   }, [session, postId]);
 
   async function handleToggle() {
@@ -42,13 +44,30 @@ export function LikeButton({
       if (res.ok) {
         const data = await res.json();
         setLiked(data.liked);
-        setCount((prev) => (data.liked ? prev + 1 : prev - 1));
+        if (typeof data.count === "number") {
+          setCount(data.count);
+        } else {
+          setCount((prev) => (data.liked ? prev + 1 : prev - 1));
+        }
       }
     } catch {
-      // silently fail
     } finally {
       setLoading(false);
     }
+  }
+
+  if (!session) {
+    return (
+      <Button
+        variant="ghost"
+        size="sm"
+        render={<Link href="/login" />}
+        className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground"
+      >
+        <Heart className="size-4" />
+        <span>{count}</span>
+      </Button>
+    );
   }
 
   return (
@@ -56,7 +75,7 @@ export function LikeButton({
       variant="ghost"
       size="sm"
       onClick={handleToggle}
-      disabled={!session || loading}
+      disabled={loading}
       className="flex items-center gap-1.5 text-sm"
     >
       <Heart

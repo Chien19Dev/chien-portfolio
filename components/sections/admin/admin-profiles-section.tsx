@@ -18,6 +18,8 @@ const EXTRA_FIELDS: Record<string, string> = {
   location: "Địa điểm",
   githubUrl: "GitHub URL",
   linkedinUrl: "LinkedIn URL",
+  twitterUrl: "Twitter / X URL",
+  instagramUrl: "Instagram URL",
   websiteUrl: "Website URL",
 };
 

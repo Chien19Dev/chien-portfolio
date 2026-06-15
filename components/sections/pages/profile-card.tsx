@@ -1,8 +1,7 @@
 "use client";
 
 import { Globe, Mail, MapPin, Phone } from "lucide-react";
-import { FaGithub } from "react-icons/fa";
-import { FaLinkedinIn } from "react-icons/fa";
+import { FaGithub, FaInstagram, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import { Profile } from "@/lib/api";
 import { DecoFrame } from "@/components/sections/deco-frame";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -108,6 +107,38 @@ export function ProfileCard({ profile, initials, loading }: ProfileCardProps) {
                 }
               >
                 <FaLinkedinIn />
+              </Button>
+            )}
+            {profile?.twitterUrl && (
+              <Button
+                variant="outline"
+                size="icon"
+                render={
+                  <a
+                    href={profile.twitterUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Twitter / X"
+                  />
+                }
+              >
+                <FaXTwitter />
+              </Button>
+            )}
+            {profile?.instagramUrl && (
+              <Button
+                variant="outline"
+                size="icon"
+                render={
+                  <a
+                    href={profile.instagramUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Instagram"
+                  />
+                }
+              >
+                <FaInstagram />
               </Button>
             )}
             {profile?.websiteUrl && (

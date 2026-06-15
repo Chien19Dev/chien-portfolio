@@ -1,6 +1,7 @@
 import { BookmarkButton } from "@/components/blog/bookmark-button";
-import { CommentSection } from "@/components/blog/comment-section";
+import { BlogComments } from "@/components/blog/blog-comments";
 import { LikeButton } from "@/components/blog/like-button";
+import { ShareButton } from "@/components/blog/share-button";
 import { DecoFrame } from "@/components/sections/deco-frame";
 import { Button } from "@/components/ui/button";
 import { prisma } from "@/lib/prisma";
@@ -13,6 +14,9 @@ import { notFound } from "next/navigation";
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
 }
+
+const SITE_URL =
+  process.env.NEXT_PUBLIC_SITE_URL || "https://chien19.vercel.app";
 
 export const revalidate = 60;
 
@@ -40,7 +44,7 @@ export async function generateMetadata({
   const description =
     post.summary ||
     `Bài viết ${post.title} — chia sẻ từ ${post.author || "Nguyễn Đình Chiến"}.`;
-  const url = `https://chien19.vercel.app/blog/${slug}`;
+  const url = `${SITE_URL}/blog/${slug}`;
   const images = post.coverImage
     ? [{ url: post.coverImage, width: 1200, height: 630, alt: post.title }]
     : [{ url: "/banner.png", width: 1200, height: 630, alt: post.title }];
@@ -76,6 +80,9 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
 
   const post = await prisma.post.findUnique({
     where: { slug, published: true },
+    include: {
+      _count: { select: { likes: true } },
+    },
   });
 
   if (!post) {
@@ -115,7 +122,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
     },
     mainEntityOfPage: {
       "@type": "WebPage",
-      "@id": `https://chien19.vercel.app/blog/${slug}`,
+      "@id": `${SITE_URL}/blog/${slug}`,
     },
   };
 
@@ -197,13 +204,26 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
               dangerouslySetInnerHTML={{ __html: post.content }}
             />
 
-            <div className="flex items-center gap-2 pt-4 border-t border-border">
-              <LikeButton postId={post.id} />
+            <div className="flex flex-wrap items-center gap-2 pt-4 border-t border-border">
+              <LikeButton
+                postId={post.id}
+                initialCount={post._count.likes}
+              />
+              <ShareButton
+                title={post.title}
+                url={`${SITE_URL}/blog/${slug}`}
+                text={post.summary || post.title}
+              />
               <BookmarkButton postId={post.id} />
             </div>
           </DecoFrame>
 
-          <CommentSection postId={post.id} />
+          <BlogComments
+            postId={post.id}
+            slug={slug}
+            title={post.title}
+            url={`${SITE_URL}/blog/${slug}`}
+          />
         </div>
       </div>
     </div>

@@ -11,6 +11,8 @@ export type Profile = {
   location?: string | null;
   githubUrl?: string | null;
   linkedinUrl?: string | null;
+  twitterUrl?: string | null;
+  instagramUrl?: string | null;
   websiteUrl?: string | null;
   createdAt?: string;
   updatedAt?: string;

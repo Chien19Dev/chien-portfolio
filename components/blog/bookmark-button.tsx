@@ -41,7 +41,6 @@ export function BookmarkButton({
         setBookmarked(data.bookmarked);
       }
     } catch {
-      // silently fail
     } finally {
       setLoading(false);
     }
@@ -57,9 +56,7 @@ export function BookmarkButton({
     >
       <Bookmark
         className={`size-4 transition-colors ${
-          bookmarked
-            ? "fill-primary text-primary"
-            : "text-muted-foreground"
+          bookmarked ? "fill-primary text-primary" : "text-muted-foreground"
         }`}
       />
       <span className={bookmarked ? "text-primary" : "text-muted-foreground"}>
