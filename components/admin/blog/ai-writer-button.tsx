@@ -29,7 +29,8 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { flushSync } from "react-dom";
 
 interface OutlineItem {
   level: "H2" | "H3";
@@ -75,6 +76,12 @@ export function AiWriterButton({ onApply, existingTitle }: AiWriterButtonProps) 
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<View>("config");
 
+  // Always-fresh ref for the callback — never stale
+  const onApplyRef = useRef(onApply);
+  useEffect(() => {
+    onApplyRef.current = onApply;
+  }, [onApply]);
+
   const [config, setConfig] = useState<AiConfig>({
     keyword: "",
     title: existingTitle || "",
@@ -84,6 +91,8 @@ export function AiWriterButton({ onApply, existingTitle }: AiWriterButtonProps) 
 
   const [outline, setOutline] = useState<OutlineItem[]>([]);
   const [generatedContent, setGeneratedContent] = useState<AiWriterResult | null>(null);
+  const generatedContentRef = useRef<AiWriterResult | null>(null);
+  const applyingRef = useRef(false);
   const [notes, setNotes] = useState("");
   const [editOutline, setEditOutline] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -94,6 +103,7 @@ export function AiWriterButton({ onApply, existingTitle }: AiWriterButtonProps) 
   const resetAll = useCallback(() => {
     setOutline([]);
     setGeneratedContent(null);
+    generatedContentRef.current = null;
     setNotes("");
     setEditOutline(false);
     setError("");
@@ -101,8 +111,9 @@ export function AiWriterButton({ onApply, existingTitle }: AiWriterButtonProps) 
   }, []);
 
   const handleClose = useCallback(() => {
+    if (applyingRef.current) return;
     setOpen(false);
-    setTimeout(() => resetAll(), 100);
+    setTimeout(() => resetAll(), 150);
   }, [resetAll]);
 
   const handleGenerateOutline = useCallback(async () => {
@@ -147,6 +158,12 @@ export function AiWriterButton({ onApply, existingTitle }: AiWriterButtonProps) 
         summary: data.summary || "",
         content: data.content || "",
       });
+      generatedContentRef.current = {
+        title: data.title || config.title,
+        slug: data.slug || "",
+        summary: data.summary || "",
+        content: data.content || "",
+      };
     } catch (err: unknown) {
       setError(err instanceof Error ? err.message : "Đã xảy ra lỗi");
     } finally {
@@ -158,15 +175,22 @@ export function AiWriterButton({ onApply, existingTitle }: AiWriterButtonProps) 
     (e: React.MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
-      if (!generatedContent) return;
-      const result = generatedContent;
+      const result = generatedContentRef.current;
+      if (!result) {
+        console.warn("[AiWriter] handleApply: no generatedContent");
+        return;
+      }
+      applyingRef.current = true;
+      flushSync(() => {
+        onApplyRef.current(result);
+      });
       setOpen(false);
       setTimeout(() => {
-        onApply(result);
+        applyingRef.current = false;
         resetAll();
-      }, 100);
+      }, 200);
     },
-    [onApply, resetAll],
+    [resetAll],
   );
 
   const isContent = view === "content";
