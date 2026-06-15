@@ -1,27 +1,28 @@
 "use client";
 
-import type { FormEvent } from "react";
-import Image from "next/image";
-import Link from "next/link";
-import {
-  Calendar,
-  Eye,
-  Loader2,
-  Save,
-  Send,
-  Tag,
-  User,
-} from "lucide-react";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { CKEditor } from "@/components/ui/ckeditor";
-import { Pattern } from "@/components/upload-file";
 import { DecoFrame } from "@/components/sections/deco-frame";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { CKEditor } from "@/components/ui/ckeditor";
+import { Input } from "@/components/ui/input";
+import { Switch } from "@/components/ui/switch";
+import { Textarea } from "@/components/ui/textarea";
+import { Pattern } from "@/components/upload-file";
 import type { Post } from "@/lib/api";
 import { cn } from "@/lib/utils";
+import {
+    Calendar,
+    Eye,
+    Loader2,
+    Save,
+    Send,
+    Tag,
+    User,
+} from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import type { FormEvent } from "react";
+import { AiWriterButton, type AiWriterResult } from "./ai-writer-button";
 
 export type BlogPostForm = Omit<Post, "id" | "createdAt" | "updatedAt"> & {
   tagsText: string;
@@ -144,9 +145,23 @@ export function BlogPostEditor({
         <DecoFrame className="p-6 md:p-8">
           <div className="flex items-center justify-between mb-4">
             <FieldLabel>Nội dung bài viết</FieldLabel>
-            <span className="text-xs text-muted-foreground tabular-nums">
-              ~{wordCount} từ
-            </span>
+            <div className="flex items-center gap-3">
+              <AiWriterButton
+                existingTitle={form.title}
+                onApply={(result: AiWriterResult) => {
+                  onChange({
+                    ...form,
+                    title: result.title || form.title,
+                    slug: result.slug || slugify(result.title),
+                    summary: result.summary || form.summary,
+                    content: result.content,
+                  });
+                }}
+              />
+              <span className="text-xs text-muted-foreground tabular-nums">
+                ~{wordCount} từ
+              </span>
+            </div>
           </div>
           <div className="blog-editor rounded-sm overflow-hidden border border-border/60">
             <CKEditor
