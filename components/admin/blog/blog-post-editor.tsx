@@ -11,13 +11,13 @@ import { Pattern } from "@/components/upload-file";
 import type { Post } from "@/lib/api";
 import { cn } from "@/lib/utils";
 import {
-    Calendar,
-    Eye,
-    Loader2,
-    Save,
-    Send,
-    Tag,
-    User,
+  Calendar,
+  Eye,
+  Loader2,
+  Save,
+  Send,
+  Tag,
+  User,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -310,7 +310,7 @@ export function BlogPostEditor({
             <FieldLabel>
               <span className="inline-flex items-center gap-1.5">
                 <Tag className="size-3" />
-                Tags
+                Tags <span className="text-xs text-muted-foreground lowercase">keywords của thẻ metadata</span>
               </span>
             </FieldLabel>
             <Input

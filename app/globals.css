@@ -514,3 +514,11 @@ body {
 .ck-editor__main{
   color:black !important;
 }
+
+.scrollbar-hide {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}

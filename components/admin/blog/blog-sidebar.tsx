@@ -1,8 +1,8 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowLeft,
   FileText,
@@ -10,8 +10,8 @@ import {
   PenLine,
   Sparkles,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { Label } from "@/components/ui/label";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 
 const NAV = [
   { href: "/admin/blogs", label: "Tất cả bài viết", icon: LayoutGrid, exact: true },
@@ -26,7 +26,7 @@ export function BlogSidebar({ postCount = 0 }: BlogSidebarProps) {
   const pathname = usePathname();
 
   return (
-    <aside className="blog-luxury-sidebar w-60 shrink-0 flex flex-col border-r border-border/60">
+    <aside className="blog-luxury-sidebar w-60 shrink-0 sticky top-0 h-full flex flex-col border-r border-border/60">
       <div className="px-6 pt-8 pb-6">
         <div className="flex items-center gap-2.5 mb-1">
           <Sparkles className="size-4 text-primary" />
@@ -38,7 +38,7 @@ export function BlogSidebar({ postCount = 0 }: BlogSidebarProps) {
         <div className="deco-rule mt-4" />
       </div>
 
-      <nav className="flex-1 px-3 space-y-0.5">
+      <nav className="flex-1 min-h-0 overflow-y-auto scrollbar-hide px-3 space-y-0.5">
         {NAV.map(({ href, label, icon: Icon, exact }) => {
           const active = exact ? pathname === href : pathname.startsWith(href);
           return (
