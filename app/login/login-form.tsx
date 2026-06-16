@@ -9,9 +9,10 @@ import { Separator } from "@/components/ui/separator";
 import { Loader2, Lock, Mail, Shield, Sparkles, UserPlus } from "lucide-react";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter, useSearchParams } from "next/navigation";
-import { Fragment, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { Fragment, useActionState, useState } from "react";
 import { FaGoogle } from "react-icons/fa";
+import { signInWithCredentials } from "./actions";
 import { LoginFormAnimation } from "./login-form-animation";
 
 interface LoginFormProps {
@@ -19,11 +20,12 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ googleEnabled }: LoginFormProps) {
-  const router = useRouter();
   const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(false);
+  const [state, formAction, isPending] = useActionState(
+    signInWithCredentials,
+    null,
+  );
   const [googleLoading, setGoogleLoading] = useState(false);
-  const [error, setError] = useState("");
 
   const callbackUrl = searchParams.get("callbackUrl") || "/";
   const authError = searchParams.get("error");
@@ -35,39 +37,8 @@ export function LoginForm({ googleEnabled }: LoginFormProps) {
         ? "Đăng nhập thất bại. Vui lòng thử lại."
         : "";
 
-  async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setLoading(true);
-    setError("");
-
-    const formData = new FormData(event.currentTarget);
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-
-    try {
-      const result = await signIn("credentials", {
-        email,
-        password,
-        redirect: false,
-        callbackUrl,
-      });
-
-      if (result?.error) {
-        setError("Email hoặc mật khẩu không đúng");
-      } else {
-        router.push(callbackUrl);
-        router.refresh();
-      }
-    } catch {
-      setError("Có lỗi xảy ra, vui lòng thử lại");
-    } finally {
-      setLoading(false);
-    }
-  }
-
   async function handleGoogleSignIn() {
     setGoogleLoading(true);
-    setError("");
     await signIn("google", { callbackUrl });
   }
 
@@ -118,7 +89,7 @@ export function LoginForm({ googleEnabled }: LoginFormProps) {
                     variant="outline"
                     size="lg"
                     className="w-full h-12"
-                    disabled={googleLoading || loading}
+                    disabled={googleLoading || isPending}
                     onClick={handleGoogleSignIn}
                   >
                     {googleLoading ? (
@@ -140,7 +111,8 @@ export function LoginForm({ googleEnabled }: LoginFormProps) {
                 </Fragment>
               )}
 
-              <form onSubmit={handleSubmit} className="space-y-3">
+              <form action={formAction} className="space-y-3">
+                <input type="hidden" name="callbackUrl" value={callbackUrl} />
                 <div className="space-y-2">
                   <Label htmlFor="email">Email</Label>
                   <div className="relative">
@@ -157,18 +129,18 @@ export function LoginForm({ googleEnabled }: LoginFormProps) {
                   </div>
                 </div>
                 <PasswordInput id="password" name="password" required />
-                {(error || initialError) && (
+                {(state?.error || initialError) && (
                   <div className="text-sm text-destructive">
-                    {error || initialError}
+                    {state?.error || initialError}
                   </div>
                 )}
                 <Button
                   type="submit"
                   className="w-full h-12 text-base font-medium mt-4"
                   size="lg"
-                  disabled={loading || googleLoading}
+                  disabled={isPending || googleLoading}
                 >
-                  {loading ? (
+                  {isPending ? (
                     <Fragment>
                       <Loader2 className="mr-2 size-5 animate-spin" />
                       Đang đăng nhập...

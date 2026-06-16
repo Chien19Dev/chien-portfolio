@@ -1,9 +1,11 @@
-import { Fragment } from "react/jsx-runtime";
-
 export default function BlogAdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  return <Fragment>{children}</Fragment>;
+  return (
+    <div className="h-[calc(100vh-var(--navbar-height,4rem))] overflow-hidden">
+      {children}
+    </div>
+  );
 }

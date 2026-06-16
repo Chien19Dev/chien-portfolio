@@ -1,4 +1,5 @@
 import Navbar from "@/components/sections/navbar";
+import { SessionSync } from "@/components/session-sync";
 import { ThemeProvider } from "@/components/theme-provider";
 import { auth } from "@/lib/auth";
 import { getCvExists, getNavigationItems } from "@/lib/data";
@@ -110,8 +111,6 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const [cvExists, navItems, session] = await Promise.all([getCvExists(), getNavigationItems(), auth()]);
-
-  // Direct DB check for admin role - most reliable method
   let isAdmin = false;
   if (session?.user?.id) {
     const dbUser = await prisma.user.findUnique({
@@ -129,6 +128,7 @@ export default async function RootLayout({
     >
       <body className="min-h-full flex flex-col font-sans">
         <SessionProvider refetchInterval={0} refetchOnWindowFocus={true}>
+          <SessionSync />
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
