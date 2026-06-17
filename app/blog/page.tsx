@@ -6,7 +6,7 @@ export const metadata: Metadata = {
   description:
     "Bài viết chia sẻ kinh nghiệm lập trình, React, Next.js, TypeScript và các giải pháp web thực tế từ Nguyễn Đình Chiến.",
   openGraph: {
-    title: "Blog & Kiến thức | Nguyễn Đình Chiến",
+    title: "Blog & Kiến thức - Nguyễn Đình Chiến",
     description:
       "Bài viết chia sẻ kinh nghiệm lập trình, React, Next.js và TypeScript.",
     url: "https://chien19.vercel.app/blog",
@@ -22,7 +22,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Blog & Kiến thức | Nguyễn Đình Chiến",
+    title: "Blog & Kiến thức - Nguyễn Đình Chiến",
     description:
       "Bài viết chia sẻ kinh nghiệm lập trình, React, Next.js và TypeScript.",
     images: ["/blog.png"],
