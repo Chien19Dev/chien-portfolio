@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { ChevronDown, List } from "lucide-react";
+import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 interface TocItem {
@@ -148,7 +149,7 @@ export function BlogTableOfContents({
             <ul className="space-y-0.5 border-s-2 border-border">
               {items.map((item) => (
                 <li key={item.id}>
-                  <a
+                  <Link
                     href={`#${item.id}`}
                     onClick={(e) => scrollToHeading(e, item.id)}
                     className={cn(
@@ -157,12 +158,12 @@ export function BlogTableOfContents({
                       item.level === "H2" && "ps-3",
                       "pe-3 py-1.5",
                       activeId === item.id
-                        ? "text-primary font-semibold border-s-2 border-primary -ms-[2px]"
-                        : "text-muted-foreground border-s-2 border-transparent -ms-[2px]",
+                        ? "text-primary font-semibold border-s-2 border-primary -ms-0.5"
+                        : "text-muted-foreground border-s-2 border-transparent -ms-0.5",
                     )}
                   >
                     {item.text}
-                  </a>
+                  </Link>
                 </li>
               ))}
             </ul>

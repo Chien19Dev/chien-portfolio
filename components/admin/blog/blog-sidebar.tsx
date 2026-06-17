@@ -14,8 +14,18 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const NAV = [
-  { href: "/admin/blogs", label: "Tất cả bài viết", icon: LayoutGrid, exact: true },
-  { href: "/admin/blogs/new", label: "Viết bài mới", icon: PenLine, exact: false },
+  {
+    href: "/admin/blogs",
+    label: "Tất cả bài viết",
+    icon: LayoutGrid,
+    exact: true,
+  },
+  {
+    href: "/admin/blogs/new",
+    label: "Viết bài mới",
+    icon: PenLine,
+    exact: false,
+  },
 ] as const;
 
 interface BlogSidebarProps {
@@ -77,11 +87,13 @@ export function BlogSidebar({ postCount = 0 }: BlogSidebarProps) {
       <div className="px-6 py-5 border-t border-border/50">
         <div className="blog-luxury-stat mb-4">
           <FileText className="size-4 text-primary/70" />
-          <div>
-            <p className="text-2xl font-medium tabular-nums leading-none">{postCount}</p>
-            <p className="text-[0.6rem] uppercase tracking-widest text-muted-foreground mt-1">
+          <div className="flex flex-row items-start gap-2">
+            <Label className="text-2xl font-medium tabular-nums leading-none">
+              {postCount}
+            </Label>
+            <Label className="text-[0.6rem] uppercase tracking-widest text-muted-foreground">
               Bài viết
-            </p>
+            </Label>
           </div>
         </div>
         <Link
