@@ -4,6 +4,7 @@ import { cn } from "@/lib/utils";
 import { ChevronDown, List } from "lucide-react";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { Button } from "../ui/button";
 
 interface TocItem {
   id: string;
@@ -122,13 +123,15 @@ export function BlogTableOfContents({
 
   return (
     <nav className="rounded-xl border border-border bg-muted/30 overflow-hidden">
-      <button
+      <Button
+        variant="default"
+        size="lg"
         type="button"
         onClick={() => setCollapsed((c) => !c)}
-        className="w-full flex items-center justify-between gap-2 px-4 py-3 text-sm font-bold text-foreground hover:bg-muted/50 transition-colors"
+        className="w-full flex items-center justify-between gap-2 px-4 py-3 text-sm font-bold text-foreground transition-colors"
       >
         <span className="flex items-center gap-2">
-          <List className="size-4 text-primary" />
+          <List className="size-4" />
           Mục lục
         </span>
         <ChevronDown
@@ -137,7 +140,7 @@ export function BlogTableOfContents({
             collapsed && "-rotate-90",
           )}
         />
-      </button>
+      </Button>
       <div
         className={cn(
           "grid transition-[grid-template-rows] duration-200 ease-in-out",

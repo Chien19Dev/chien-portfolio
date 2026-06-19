@@ -171,13 +171,13 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
-      <div className="relative z-10 container mx-auto px-4 py-3 md:py-6">
+      <div className="relative z-10 container mx-auto px-4 py-3 md:py-4">
         <div className="max-w-6xl mx-auto">
           <Button
             render={<Link href="/blog" />}
             variant="ghost"
             size="sm"
-            className="-ms-3 text-muted-foreground hover:text-foreground mb-6"
+            className="-ms-3 text-muted-foreground hover:text-foreground mb-3"
           >
             <ChevronLeft className="size-4" />
             Quay lại Blog
