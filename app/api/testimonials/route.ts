@@ -11,6 +11,15 @@ export async function GET(request: NextRequest) {
     const testimonials = await prisma.testimonial.findMany({
       where,
       orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+      select: {
+        id: true,
+        authorName: true,
+        authorTitle: true,
+        content: true,
+        avatar: true,
+        order: true,
+        published: true,
+      },
     });
     return NextResponse.json(testimonials);
   } catch (error) {

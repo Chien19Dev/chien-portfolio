@@ -136,7 +136,7 @@ export default function BlogListClient() {
                 const wordCount = post.content
                   ? post.content.replace(/<[^>]*>/g, "").split(/\s+/).length
                   : 0;
-                const readTime = Math.max(1, Math.ceil(wordCount / 200));
+                const readTime = post.readTime ?? Math.max(1, Math.ceil(wordCount / 200));
 
                 return (
                   <Link

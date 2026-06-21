@@ -1,4 +1,4 @@
-﻿"use client";
+"use client";
 
 import { AnalyticsDashboard } from "@/components/admin/analytics-dashboard";
 import { CategoriesSection } from "@/components/admin/categories-section";
@@ -104,7 +104,7 @@ export default function AdminPage() {
       api.skills.list(),
       api.testimonials.list(),
       api.contacts.list(),
-      api.posts.list(),
+      api.posts.count(),
       api.users.list(),
     ]);
     if (results[0].status === "fulfilled") setProfiles(results[0].value);
@@ -113,7 +113,7 @@ export default function AdminPage() {
     if (results[3].status === "fulfilled") setTestimonials(results[3].value);
     if (results[4].status === "fulfilled") setContacts(results[4].value);
     if (results[5].status === "fulfilled")
-      setPostCount(results[5].value.length);
+      setPostCount(results[5].value.count);
     if (results[6].status === "fulfilled") setUsers(results[6].value);
   }
 

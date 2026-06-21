@@ -103,14 +103,7 @@ export default async function RootLayout({
     getNavigationItems(),
     auth(),
   ]);
-  let isAdmin = false;
-  if (session?.user?.id) {
-    const dbUser = await prisma.user.findUnique({
-      where: { id: session.user.id },
-      select: { role: true },
-    });
-    isAdmin = dbUser?.role === "ADMIN";
-  }
+  const isAdmin = session?.user?.role === "ADMIN";
 
   return (
     <html

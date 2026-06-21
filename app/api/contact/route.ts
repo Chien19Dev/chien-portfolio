@@ -14,6 +14,15 @@ export async function GET() {
 
     const contacts = await prisma.contactMessage.findMany({
       orderBy: { createdAt: "desc" },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        subject: true,
+        message: true,
+        isRead: true,
+        createdAt: true,
+      },
     });
     return NextResponse.json(contacts);
   } catch (error) {

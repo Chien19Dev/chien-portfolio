@@ -11,7 +11,25 @@ export async function GET(request: NextRequest) {
     const projects = await prisma.project.findMany({
       where,
       orderBy: { createdAt: "desc" },
-      include: { category: true },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        technologies: true,
+        githubUrl: true,
+        demoUrl: true,
+        published: true,
+        createdAt: true,
+        images: true,
+        categoryId: true,
+        category: {
+          select: {
+            id: true,
+            name: true,
+            slug: true,
+          },
+        },
+      },
     });
     return NextResponse.json(projects);
   } catch (error) {

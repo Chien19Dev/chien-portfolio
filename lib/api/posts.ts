@@ -4,6 +4,7 @@ import type { Bookmark, Comment, Like, Post, SearchResult } from "./types";
 export const postsApi = {
   ...crud<Post, Omit<Post, "id">, Partial<Post>>("/posts"),
   get: (id: string) => request<Post>(`/posts/${id}`),
+  count: () => request<{ count: number }>("/posts/count"),
 };
 
 export const commentsApi = {

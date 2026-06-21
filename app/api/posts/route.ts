@@ -36,6 +36,21 @@ export async function GET(request: NextRequest) {
       }
     }
 
+    const selectFields = {
+      id: true,
+      title: true,
+      slug: true,
+      summary: true,
+      published: true,
+      coverImage: true,
+      author: true,
+      category: true,
+      tags: true,
+      publishedAt: true,
+      createdAt: true,
+      content: true,
+    };
+
     // Pagination: only when page param is provided (backward compatible)
     if (pageParam) {
       const page = Math.max(1, parseInt(pageParam, 10) || 1);
@@ -48,12 +63,22 @@ export async function GET(request: NextRequest) {
           orderBy: { publishedAt: "desc" },
           skip,
           take: limit,
+          select: selectFields,
         }),
         prisma.post.count({ where }),
       ]);
 
+      const postsWithReadTime = posts.map((post) => {
+        const wordCount = post.content
+          ? post.content.replace(/<[^>]*>/g, "").split(/\s+/).length
+          : 0;
+        const readTime = Math.max(1, Math.ceil(wordCount / 200));
+        const { content, ...rest } = post;
+        return { ...rest, readTime };
+      });
+
       return NextResponse.json({
-        posts,
+        posts: postsWithReadTime,
         total,
         page,
         totalPages: Math.ceil(total / limit),
@@ -63,8 +88,17 @@ export async function GET(request: NextRequest) {
     const posts = await prisma.post.findMany({
       where,
       orderBy: { publishedAt: "desc" },
+      select: selectFields,
     });
-    return NextResponse.json(posts);
+    const postsWithReadTime = posts.map((post) => {
+      const wordCount = post.content
+        ? post.content.replace(/<[^>]*>/g, "").split(/\s+/).length
+        : 0;
+      const readTime = Math.max(1, Math.ceil(wordCount / 200));
+      const { content, ...rest } = post;
+      return { ...rest, readTime };
+    });
+    return NextResponse.json(postsWithReadTime);
   } catch (error) {
     console.error("Error fetching posts:", error);
     return NextResponse.json(

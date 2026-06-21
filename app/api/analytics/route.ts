@@ -31,19 +31,18 @@ export async function GET() {
       path: p.path,
       count: p._count.path,
     }));
-    const viewsRaw = await prisma.pageView.findMany({
-      where: { createdAt: { gte: sevenDaysAgo } },
-      select: { createdAt: true },
-      orderBy: { createdAt: "asc" },
-    });
-    const viewsByDay: Record<string, number> = {};
-    viewsRaw.forEach((v) => {
-      const day = new Date(v.createdAt).toISOString().split("T")[0];
-      viewsByDay[day] = (viewsByDay[day] || 0) + 1;
-    });
-    const viewsOverTime = Object.entries(viewsByDay)
-      .sort(([a], [b]) => a.localeCompare(b))
-      .map(([date, count]) => ({ date, count }));
+    const viewsRaw = (await prisma.$queryRaw`
+      SELECT DATE_TRUNC('day', "createdAt") as date, COUNT(*)::int as count
+      FROM "PageView"
+      WHERE "createdAt" >= ${sevenDaysAgo}
+      GROUP BY DATE_TRUNC('day', "createdAt")
+      ORDER BY date ASC
+    `) as { date: Date; count: number }[];
+
+    const viewsOverTime = viewsRaw.map((v) => ({
+      date: new Date(v.date).toISOString().split("T")[0],
+      count: v.count,
+    }));
     const referrersRaw = await prisma.pageView.groupBy({
       by: ["referrer"],
       where: {

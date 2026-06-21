@@ -26,6 +26,20 @@ export async function GET(request: NextRequest) {
                 { tags: { has: searchQuery } },
               ],
             },
+            select: {
+              id: true,
+              title: true,
+              slug: true,
+              summary: true,
+              published: true,
+              coverImage: true,
+              author: true,
+              category: true,
+              tags: true,
+              publishedAt: true,
+              createdAt: true,
+              content: true,
+            },
             orderBy: { publishedAt: "desc" },
             take: 20,
           }),
@@ -40,12 +54,33 @@ export async function GET(request: NextRequest) {
                 { technologies: { has: searchQuery } },
               ],
             },
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              technologies: true,
+              githubUrl: true,
+              demoUrl: true,
+              published: true,
+              categoryId: true,
+              createdAt: true,
+              images: true,
+            },
             orderBy: { createdAt: "desc" },
             take: 20,
           }),
     ]);
 
-    return NextResponse.json({ posts, projects });
+    const postsWithReadTime = posts.map((post) => {
+      const wordCount = post.content
+        ? post.content.replace(/<[^>]*>/g, "").split(/\s+/).length
+        : 0;
+      const readTime = Math.max(1, Math.ceil(wordCount / 200));
+      const { content, ...rest } = post;
+      return { ...rest, readTime };
+    });
+
+    return NextResponse.json({ posts: postsWithReadTime, projects });
   } catch (error) {
     console.error("Error searching:", error);
     return NextResponse.json({ error: "Failed to search" }, { status: 500 });

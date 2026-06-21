@@ -164,7 +164,7 @@ export function AdminPostsSection({
               Nội dung bài viết (CKEditor)
             </span>
             <CKEditor
-              value={form.content}
+              value={form.content || ""}
               onChange={(content) => onChange({ ...form, content })}
             />
           </div>

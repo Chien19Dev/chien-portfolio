@@ -112,6 +112,8 @@ model Post {
   comments    Comment[]
   likes       Like[]
   bookmarks   Bookmark[]
+
+  @@index([published, publishedAt])
 }
 
 model Testimonial {
@@ -185,6 +187,9 @@ model PageView {
   browser   String?
   os        String?
   createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path])
 }
 
 model Navigation {
@@ -216,4 +221,6 @@ model Notification {
   isRead    Boolean  @default(false)
   link      String?
   createdAt DateTime @default(now())
+
+  @@index([isRead])
 }

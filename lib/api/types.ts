@@ -79,7 +79,8 @@ export type Post = {
   id: string;
   title: string;
   slug: string;
-  content: string;
+  content?: string;
+  readTime?: number;
   summary?: string | null;
   published: boolean;
   coverImage?: string | null;

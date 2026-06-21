@@ -104,7 +104,7 @@ export function BlogPostEditor({
       .catch(() => {});
   }, []);
 
-  const wordCount = form.content
+  const wordCount = (form.content || "")
     .replace(/<[^>]*>/g, " ")
     .trim()
     .split(/\s+/)
@@ -186,7 +186,7 @@ export function BlogPostEditor({
           </div>
           <div className="blog-editor rounded-sm overflow-hidden border border-border/60">
             <CKEditor
-              value={form.content}
+              value={form.content || ""}
               onChange={(content) => onChange({ ...form, content })}
             />
           </div>

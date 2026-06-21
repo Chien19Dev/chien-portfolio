@@ -6,6 +6,14 @@ export async function GET() {
   try {
     const items = await prisma.navigation.findMany({
       orderBy: { order: "asc" },
+      select: {
+        id: true,
+        label: true,
+        href: true,
+        icon: true,
+        order: true,
+        isActive: true,
+      },
     });
     return NextResponse.json(items);
   } catch (error) {

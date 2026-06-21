@@ -11,6 +11,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 
 interface BlogPostPageProps {
   params: Promise<{ slug: string }>;
@@ -21,22 +22,21 @@ const SITE_URL =
 
 export const revalidate = 60;
 
+const getPost = cache(async (slug: string) => {
+  return prisma.post.findUnique({
+    where: { slug, published: true },
+    include: {
+      _count: { select: { likes: true } },
+    },
+  });
+});
+
 export async function generateMetadata({
   params,
 }: BlogPostPageProps): Promise<Metadata> {
   const { slug } = await params;
 
-  const post = await prisma.post.findUnique({
-    where: { slug, published: true },
-    select: {
-      title: true,
-      summary: true,
-      coverImage: true,
-      author: true,
-      publishedAt: true,
-      tags: true,
-    },
-  });
+  const post = await getPost(slug);
 
   if (!post) {
     return { title: "Không tìm thấy bài viết" };
@@ -79,12 +79,7 @@ export async function generateMetadata({
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params;
 
-  const post = await prisma.post.findUnique({
-    where: { slug, published: true },
-    include: {
-      _count: { select: { likes: true } },
-    },
-  });
+  const post = await getPost(slug);
 
   if (!post) {
     notFound();

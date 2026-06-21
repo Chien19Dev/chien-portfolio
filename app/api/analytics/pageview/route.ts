@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { getClientIp } from "@/lib/rate-limit";
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse, after } from "next/server";
 
 function parseUserAgent(ua: string | null) {
   if (!ua) return { browser: null, os: null, device: null };
@@ -25,6 +25,49 @@ function parseUserAgent(ua: string | null) {
   return { browser, os, device };
 }
 
+interface PageViewData {
+  path: string;
+  referrer: string | null;
+  userAgent: string | null;
+  ip: string;
+  country: string | null;
+  city: string | null;
+  device: string | null;
+  browser: string | null;
+  os: string | null;
+}
+
+const globalForPageView = globalThis as unknown as {
+  pageViewQueue?: PageViewData[];
+  flushTimer?: NodeJS.Timeout;
+};
+
+if (!globalForPageView.pageViewQueue) {
+  globalForPageView.pageViewQueue = [];
+}
+
+async function flushQueue() {
+  const queue = globalForPageView.pageViewQueue;
+  if (!queue || queue.length === 0) return;
+  const itemsToFlush = [...queue];
+  queue.length = 0; // Clear the queue
+
+  try {
+    await prisma.pageView.createMany({
+      data: itemsToFlush,
+    });
+  } catch (error) {
+    console.error("Error flushing pageview queue:", error);
+  }
+}
+
+// Setup background interval if running in a dynamic warm instance
+if (!globalForPageView.flushTimer) {
+  globalForPageView.flushTimer = setInterval(() => {
+    flushQueue().catch(console.error);
+  }, 30000);
+}
+
 export async function POST(request: NextRequest) {
   try {
     const { path, referrer } = await request.json();
@@ -43,19 +86,26 @@ export async function POST(request: NextRequest) {
       request.headers.get("x-vercel-ip-city") || null;
     const { browser, os, device } = parseUserAgent(userAgent);
 
-    await prisma.pageView.create({
-      data: {
-        path,
-        referrer: referrer || null,
-        userAgent,
-        ip,
-        country,
-        city: city ? decodeURIComponent(city) : null,
-        device,
-        browser,
-        os,
-      },
-    });
+    const pageViewData: PageViewData = {
+      path,
+      referrer: referrer || null,
+      userAgent,
+      ip,
+      country,
+      city: city ? decodeURIComponent(city) : null,
+      device,
+      browser,
+      os,
+    };
+
+    globalForPageView.pageViewQueue!.push(pageViewData);
+
+    // If queue is large, flush immediately using Next.js after()
+    if (globalForPageView.pageViewQueue!.length >= 10) {
+      after(async () => {
+        await flushQueue();
+      });
+    }
 
     return NextResponse.json({ success: true });
   } catch (error) {

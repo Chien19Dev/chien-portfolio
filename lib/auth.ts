@@ -75,6 +75,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         });
         if (!dbUser) return false;
         user.id = dbUser.id;
+        (user as any).role = dbUser.role;
       }
       return true;
     },
@@ -84,18 +85,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         session.user.email = token.email as string;
         session.user.name = token.name as string;
         session.user.image = token.picture as string;
-        const tokenRole = token.role as string | undefined;
-        if (tokenRole) {
-          session.user.role = tokenRole;
-        } else if (token.sub) {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: token.sub },
-            select: { role: true },
-          });
-          session.user.role = dbUser?.role || "USER";
-        } else {
-          session.user.role = "USER";
-        }
+        session.user.role = (token.role as string) || "USER";
       }
       return session;
     },
@@ -105,25 +95,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.email = user.email;
         token.name = user.name;
         token.picture = user.image;
-        if (user.id) {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: user.id },
-            select: { role: true },
-          });
-          if (dbUser) {
-            token.role = dbUser.role;
-          } else if (user.email) {
-            const dbUserByEmail = await prisma.user.findUnique({
-              where: { email: user.email },
-              select: { role: true },
-            });
-            token.role = dbUserByEmail?.role || (user as any).role || "USER";
-          } else {
-            token.role = (user as any).role || "USER";
-          }
-        } else {
-          token.role = (user as any).role || "USER";
-        }
+        // Role is already available from authorize() for credentials
+        // or from signIn() callback for Google
+        token.role = (user as any).role || "USER";
       }
       return token;
     },

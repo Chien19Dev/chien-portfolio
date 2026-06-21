@@ -12,13 +12,10 @@ export function SessionSync() {
   const prevStatus = useRef(status);
 
   useEffect(() => {
-    if (prevPathname.current !== pathname) {
-      update();
-      prevPathname.current = pathname;
-    }
-  }, [pathname, update]);
-  useEffect(() => {
-    if (prevStatus.current !== status) {
+    if (
+      prevStatus.current !== status &&
+      (prevStatus.current === "authenticated" || status === "authenticated")
+    ) {
       router.refresh();
     }
     prevStatus.current = status;

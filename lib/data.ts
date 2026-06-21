@@ -40,14 +40,45 @@ export async function getHomePageData(): Promise<{
       prisma.project.findMany({
         where: { published: true },
         orderBy: { createdAt: "desc" },
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          technologies: true,
+          githubUrl: true,
+          demoUrl: true,
+          published: true,
+          createdAt: true,
+          images: true,
+        },
       }),
       prisma.skill.findMany({
         where: { published: true },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+        select: {
+          id: true,
+          name: true,
+          category: true,
+          icon: true,
+          level: true,
+          order: true,
+          published: true,
+          createdAt: true,
+        },
       }),
       prisma.testimonial.findMany({
         where: { published: true },
         orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+        select: {
+          id: true,
+          authorName: true,
+          authorTitle: true,
+          content: true,
+          avatar: true,
+          order: true,
+          published: true,
+          createdAt: true,
+        },
       }),
     ]);
 
@@ -107,6 +138,14 @@ export async function getNavigationItems() {
   return prisma.navigation.findMany({
     where: { isActive: true },
     orderBy: { order: "asc" },
+    select: {
+      id: true,
+      label: true,
+      href: true,
+      icon: true,
+      order: true,
+      isActive: true,
+    },
   });
 }
 
