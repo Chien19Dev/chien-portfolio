@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { alertError, alertSuccess } from "@/lib/alerts";
 import { Camera, Loader2 } from "lucide-react";
 import { useSession } from "next-auth/react";
@@ -187,12 +188,12 @@ export function UserSettingsDialog({
           </div>
           <div className="space-y-1.5">
             <Label>Giới thiệu</Label>
-            <textarea
+            <Textarea
+              size="default"
               value={bio}
               onChange={(e) => setBio(e.target.value)}
               placeholder="Viết vài dòng về bản thân..."
               rows={3}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
             />
           </div>
           <button

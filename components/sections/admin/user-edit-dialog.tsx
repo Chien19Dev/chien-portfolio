@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { alertError } from "@/lib/alerts";
 import type { User } from "@/lib/api";
 import { Camera, Loader2, Mail } from "lucide-react";
@@ -142,12 +143,12 @@ export function UserEditDialog({
           </div>
           <div className="space-y-1.5">
             <Label>Giới thiệu</Label>
-            <textarea
+            <Textarea
+              size="default"
               value={editBio}
               onChange={(e) => setEditBio(e.target.value)}
               placeholder="Viết vài dòng giới thiệu về bản thân..."
               rows={3}
-              className="w-full rounded-md border border-border bg-background px-3 py-2 text-sm placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 resize-none"
             />
           </div>
         </DialogPanel>
