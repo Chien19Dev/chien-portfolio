@@ -129,9 +129,6 @@ export function UserEditDialog({
                 onChange={handleAvatarUpload}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Click vào ảnh để thay đổi (tối đa 5MB)
-            </p>
           </div>
           <div className="space-y-1.5">
             <Label>Tên hiển thị</Label>

@@ -174,9 +174,6 @@ export function UserSettingsDialog({
                 onChange={handleAvatarUpload}
               />
             </div>
-            <p className="text-xs text-muted-foreground">
-              Click vào ảnh để thay đổi (tối đa 5MB)
-            </p>
           </div>
           <div className="space-y-1.5">
             <Label>Họ tên</Label>
