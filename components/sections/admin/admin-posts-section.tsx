@@ -29,6 +29,7 @@ interface Props {
   emptyForm: PostForm;
   setEditingId: (id: string) => void;
   onImageUploadingChange?: (isUploading: boolean) => void;
+  loading?: boolean;
 }
 
 const slugify = (text: string) => {
@@ -55,6 +56,7 @@ export function AdminPostsSection({
   emptyForm,
   setEditingId,
   onImageUploadingChange,
+  loading,
 }: Props) {
   return (
     <WorkspaceSplit
@@ -186,6 +188,7 @@ export function AdminPostsSection({
       list={
         <WsTable
           cols={["Bài viết", "Danh mục / Tác giả", "Thời gian"]}
+          loading={loading}
           rows={posts.map((item) => {
             const formattedDate = item.publishedAt
               ? new Date(item.publishedAt).toLocaleString("vi-VN", {

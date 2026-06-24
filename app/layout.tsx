@@ -45,7 +45,13 @@ export const metadata: Metadata = {
     "Web Developer",
     "Fullstack Developer",
   ],
-  authors: [{ name: "Nguyễn Đình Chiến", url: "https://chien19.vercel.app" }],
+  authors: [
+    {
+      name: "Nguyễn Đình Chiến",
+      url: "https://chien19.vercel.app",
+    },
+  ],
+
   creator: "Nguyễn Đình Chiến",
   publisher: "Nguyễn Đình Chiến",
   robots: {

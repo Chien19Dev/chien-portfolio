@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 import { Section } from "@/types/types";
 import { Label } from "../ui/label";
 import { Button } from "../ui/button";
+import { Skeleton } from "../ui/skeleton";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink } from "lucide-react";
 
@@ -21,6 +22,7 @@ interface SidebarProps {
     categories: number;
     users: number;
   };
+  loading?: boolean;
 }
 
 const NAV_ITEMS: {
@@ -37,7 +39,7 @@ const NAV_ITEMS: {
   { id: "categories", label: "Danh mục", countKey: "categories" },
 ];
 
-export function Sidebar({ section, onSection, counts }: SidebarProps) {
+export function Sidebar({ section, onSection, counts, loading }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -64,9 +66,13 @@ export function Sidebar({ section, onSection, counts }: SidebarProps) {
                 <ExternalLink className="size-3 opacity-50" />
               </Label>
               <Label className="relative z-10 cursor-pointer">
-                <span className="text-xs tabular-nums text-muted-foreground/60">
-                  {counts[item.countKey]}
-                </span>
+                {loading ? (
+                  <Skeleton className="h-4 w-6" />
+                ) : (
+                  <span className="text-xs tabular-nums text-muted-foreground/60">
+                    {counts[item.countKey]}
+                  </span>
+                )}
               </Label>
             </Link>
           ) : (
@@ -88,7 +94,9 @@ export function Sidebar({ section, onSection, counts }: SidebarProps) {
           onClick={() => onSection("contacts")}
           label="Tin nhắn"
           badge={
-            counts.unread > 0 ? (
+            loading ? (
+              <Skeleton className="h-4 w-4 rounded-full" />
+            ) : counts.unread > 0 ? (
               <motion.span
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1, opacity: 1 }}
@@ -106,7 +114,7 @@ export function Sidebar({ section, onSection, counts }: SidebarProps) {
           active={section === "categories"}
           onClick={() => onSection("categories")}
           label="Danh mục"
-          count={counts.categories}
+          count={loading ? undefined : counts.categories}
         />
         <NavButton
           active={section === "navigation"}
@@ -122,29 +130,41 @@ export function Sidebar({ section, onSection, counts }: SidebarProps) {
           active={section === "users"}
           onClick={() => onSection("users")}
           label="Người dùng"
-          count={counts.users}
+          count={loading ? undefined : counts.users}
         />
       </nav>
 
       <div className="p-2 border-t border-border grid grid-cols-2 gap-2">
-        {[
-          { n: counts.profiles, l: "Hồ sơ" },
-          { n: counts.projects, l: "Dự án" },
-          { n: counts.skills, l: "Kỹ năng" },
-          { n: counts.testimonials, l: "Đánh giá" },
-        ].map(({ n, l }) => (
-          <div
-            key={l}
-            className="bg-background/70 px-3 py-1 flex flex-row items-center gap-2"
-          >
-            <Label className="text-base font-medium leading-none tabular-nums">
-              {n}
-            </Label>
-            <Label className="text-[0.6rem] tracking-wide text-muted-foreground mt-1">
-              {l}
-            </Label>
-          </div>
-        ))}
+        {loading ? (
+          Array.from({ length: 4 }).map((_, i) => (
+            <div
+              key={i}
+              className="bg-background/70 px-3 py-1 flex flex-row items-center gap-2"
+            >
+              <Skeleton className="h-5 w-6" />
+              <Skeleton className="h-3 w-10" />
+            </div>
+          ))
+        ) : (
+          [
+            { n: counts.profiles, l: "Hồ sơ" },
+            { n: counts.projects, l: "Dự án" },
+            { n: counts.skills, l: "Kỹ năng" },
+            { n: counts.testimonials, l: "Đánh giá" },
+          ].map(({ n, l }) => (
+            <div
+              key={l}
+              className="bg-background/70 px-3 py-1 flex flex-row items-center gap-2"
+            >
+              <Label className="text-base font-medium leading-none tabular-nums">
+                {n}
+              </Label>
+              <Label className="text-[0.6rem] tracking-wide text-muted-foreground mt-1">
+                {l}
+              </Label>
+            </div>
+          ))
+        )}
       </div>
     </aside>
   );

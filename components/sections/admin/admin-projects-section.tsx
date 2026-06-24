@@ -30,6 +30,7 @@ interface Props {
   emptyForm: ProjectForm;
   setEditingId: (id: string) => void;
   onImageUploadingChange?: (isUploading: boolean) => void;
+  loading?: boolean;
 }
 
 export function ProjectsSection({
@@ -43,6 +44,7 @@ export function ProjectsSection({
   emptyForm,
   setEditingId,
   onImageUploadingChange,
+  loading,
 }: Props) {
   const [detailProject, setDetailProject] = useState<Project | null>(null);
 
@@ -137,6 +139,7 @@ export function ProjectsSection({
         list={
           <WsTable
             cols={["Dự án", "Công nghệ"]}
+            loading={loading}
             rows={projects.map((item) => ({
               key: item.id,
               cells: [

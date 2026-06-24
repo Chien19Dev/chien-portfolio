@@ -21,6 +21,7 @@ interface Props {
   onReload: () => void;
   emptyForm: SkillForm;
   setEditingId: (id: string) => void;
+  loading?: boolean;
 }
 
 export function SkillsSection({
@@ -33,6 +34,7 @@ export function SkillsSection({
   onReload,
   emptyForm,
   setEditingId,
+  loading,
 }: Props) {
   return (
     <WorkspaceSplit
@@ -112,6 +114,7 @@ export function SkillsSection({
       list={
         <WsTable
           cols={["Kỹ năng", "Danh mục", "Mức độ"]}
+          loading={loading}
           rows={skills.map((item) => ({
             key: item.id,
             cells: [

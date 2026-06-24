@@ -26,7 +26,8 @@ import {
 } from "@/lib/api";
 import { Section } from "@/types/types";
 import { RefreshCw } from "lucide-react";
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useLayoutEffect, useState } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 
 type ProfileForm = Omit<Profile, "id" | "createdAt" | "updatedAt">;
 type ProjectForm = Omit<Project, "id" | "createdAt" | "updatedAt"> & {
@@ -76,7 +77,18 @@ const emptyTestimonial: TestimonialForm = {
 };
 
 export default function AdminPage() {
-  const [section, setSection] = useState<Section>("profiles");
+  const router = useRouter();
+  const searchParams = useSearchParams();
+
+  const initialSection = searchParams?.get("section") as Section | null;
+  const [section, setSection] = useState<Section>(initialSection || "profiles");
+  const [sidebarLoading, setSidebarLoading] = useState(true);
+  const [profilesLoading, setProfilesLoading] = useState(false);
+  const [projectsLoading, setProjectsLoading] = useState(false);
+  const [skillsLoading, setSkillsLoading] = useState(false);
+  const [testimonialsLoading, setTestimonialsLoading] = useState(false);
+  const [contactsLoading, setContactsLoading] = useState(false);
+  const [usersLoading, setUsersLoading] = useState(false);
   const [profiles, setProfiles] = useState<Profile[]>([]);
   const [projects, setProjects] = useState<Project[]>([]);
   const [skills, setSkills] = useState<Skill[]>([]);
@@ -97,29 +109,164 @@ export default function AdminPage() {
   const [editingSkillId, setEditingSkillId] = useState("");
   const [editingTestimonialId, setEditingTestimonialId] = useState("");
 
-  async function load() {
-    const results = await Promise.allSettled([
-      api.profiles.list(),
-      api.projects.list(),
-      api.skills.list(),
-      api.testimonials.list(),
-      api.contacts.list(),
-      api.posts.count(),
-      api.users.list(),
-    ]);
-    if (results[0].status === "fulfilled") setProfiles(results[0].value);
-    if (results[1].status === "fulfilled") setProjects(results[1].value);
-    if (results[2].status === "fulfilled") setSkills(results[2].value);
-    if (results[3].status === "fulfilled") setTestimonials(results[3].value);
-    if (results[4].status === "fulfilled") setContacts(results[4].value);
-    if (results[5].status === "fulfilled")
-      setPostCount(results[5].value.count);
-    if (results[6].status === "fulfilled") setUsers(results[6].value);
+  async function loadProfiles() {
+    setProfilesLoading(true);
+    try {
+      const data = await api.profiles.list();
+      setProfiles(data);
+    } catch {
+    } finally {
+      setProfilesLoading(false);
+      setSidebarLoading(false);
+    }
   }
 
-  useEffect(() => {
-    load();
-  }, []);
+  async function loadProjects() {
+    setProjectsLoading(true);
+    try {
+      const data = await api.projects.list();
+      setProjects(data);
+    } catch {
+    } finally {
+      setProjectsLoading(false);
+    }
+  }
+
+  async function loadSkills() {
+    setSkillsLoading(true);
+    try {
+      const data = await api.skills.list();
+      setSkills(data);
+    } catch {
+    } finally {
+      setSkillsLoading(false);
+    }
+  }
+
+  async function loadTestimonials() {
+    setTestimonialsLoading(true);
+    try {
+      const data = await api.testimonials.list();
+      setTestimonials(data);
+    } catch {
+    } finally {
+      setTestimonialsLoading(false);
+    }
+  }
+
+  async function loadContacts() {
+    setContactsLoading(true);
+    try {
+      const data = await api.contacts.list();
+      setContacts(data);
+    } catch {
+    } finally {
+      setContactsLoading(false);
+    }
+  }
+
+  async function loadUsers() {
+    setUsersLoading(true);
+    try {
+      const data = await api.users.list();
+      setUsers(data);
+    } catch {
+    } finally {
+      setUsersLoading(false);
+    }
+  }
+
+  async function loadPostCount() {
+    try {
+      const data = await api.posts.count();
+      setPostCount(data.count);
+    } catch {
+    }
+  }
+
+  const handleRefresh = () => {
+    switch (section) {
+      case "profiles":
+        loadProfiles();
+        break;
+      case "projects":
+        loadProjects();
+        break;
+      case "skills":
+        loadSkills();
+        break;
+      case "testimonials":
+        loadTestimonials();
+        break;
+      case "contacts":
+        loadContacts();
+        break;
+      case "users":
+        loadUsers();
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handleSectionChange = (newSection: Section) => {
+    setSection(newSection);
+    router.push(`?section=${newSection}`, { scroll: false });
+    switch (newSection) {
+      case "profiles":
+        if (profiles.length === 0) loadProfiles();
+        break;
+      case "projects":
+        if (projects.length === 0) loadProjects();
+        break;
+      case "skills":
+        if (skills.length === 0) loadSkills();
+        break;
+      case "testimonials":
+        if (testimonials.length === 0) loadTestimonials();
+        break;
+      case "contacts":
+        if (contacts.length === 0) loadContacts();
+        break;
+      case "users":
+        if (users.length === 0) loadUsers();
+        break;
+      default:
+        break;
+    }
+  };
+
+  useLayoutEffect(() => {
+    const s = searchParams?.get("section") as Section | null;
+    if (s && s !== section) {
+      setSection(s);
+      switch (s) {
+        case "profiles":
+          if (profiles.length === 0) loadProfiles();
+          break;
+        case "projects":
+          if (projects.length === 0) loadProjects();
+          break;
+        case "skills":
+          if (skills.length === 0) loadSkills();
+          break;
+        case "testimonials":
+          if (testimonials.length === 0) loadTestimonials();
+          break;
+        case "contacts":
+          if (contacts.length === 0) loadContacts();
+          break;
+        case "users":
+          if (users.length === 0) loadUsers();
+          break;
+        default:
+          break;
+      }
+    } else if (!s) {
+      loadProfiles();
+      loadPostCount();
+    }
+  }, [searchParams]);
 
   async function saveProfile(e: FormEvent) {
     e.preventDefault();
@@ -133,7 +280,7 @@ export default function AdminPage() {
       }
       setProfile(emptyProfile);
       setEditingProfileId("");
-      await load();
+      await loadProfiles();
     } catch {
       alertError("Có lỗi xảy ra khi lưu hồ sơ");
     }
@@ -165,7 +312,7 @@ export default function AdminPage() {
       }
       setProject(emptyProject);
       setEditingProjectId("");
-      await load();
+      await loadProjects();
     } catch {
       alertError("Có lỗi xảy ra khi lưu dự án");
     }
@@ -188,7 +335,7 @@ export default function AdminPage() {
       }
       setSkill(emptySkill);
       setEditingSkillId("");
-      await load();
+      await loadSkills();
     } catch {
       alertError("Có lỗi xảy ra khi lưu kỹ năng");
     }
@@ -217,13 +364,14 @@ export default function AdminPage() {
       }
       setTestimonial(emptyTestimonial);
       setEditingTestimonialId("");
-      await load();
+      await loadTestimonials();
     } catch {
       alertError("Có lỗi xảy ra khi lưu đánh giá");
     }
   }
 
   const newUnread = contacts.filter((c) => !c.isRead).length;
+
 
   return (
     <div className="deco-page relative min-h-screen">
@@ -239,7 +387,7 @@ export default function AdminPage() {
             <Button
               variant="default"
               size="default"
-              onClick={load}
+              onClick={handleRefresh}
               className="rounded-sm"
             >
               <RefreshCw className="size-3.5" />
@@ -255,7 +403,8 @@ export default function AdminPage() {
         >
           <Sidebar
             section={section}
-            onSection={setSection}
+            onSection={handleSectionChange}
+            loading={sidebarLoading}
             counts={{
               profiles: profiles.length,
               projects: projects.length,
@@ -282,9 +431,10 @@ export default function AdminPage() {
                   setEditingProfileId(item.id);
                   setProfile({ ...emptyProfile, ...item });
                 }}
-                onReload={load}
+                onReload={loadProfiles}
                 emptyForm={emptyProfile}
                 setEditingId={setEditingProfileId}
+                loading={profilesLoading}
               />
             )}
             {section === "projects" && (
@@ -303,10 +453,11 @@ export default function AdminPage() {
                     technologiesText: (item.technologies || []).join(", "),
                   } as ProjectForm);
                 }}
-                onReload={load}
+                onReload={loadProjects}
                 emptyForm={emptyProject}
                 setEditingId={setEditingProjectId}
                 onImageUploadingChange={setImageUploading}
+                loading={projectsLoading}
               />
             )}
             {section === "skills" && (
@@ -320,9 +471,10 @@ export default function AdminPage() {
                   setEditingSkillId(item.id);
                   setSkill({ ...emptySkill, ...item });
                 }}
-                onReload={load}
+                onReload={loadSkills}
                 emptyForm={emptySkill}
                 setEditingId={setEditingSkillId}
+                loading={skillsLoading}
               />
             )}
             {section === "testimonials" && (
@@ -336,20 +488,21 @@ export default function AdminPage() {
                   setEditingTestimonialId(item.id);
                   setTestimonial({ ...emptyTestimonial, ...item });
                 }}
-                onReload={load}
+                onReload={loadTestimonials}
                 emptyForm={emptyTestimonial}
                 setEditingId={setEditingTestimonialId}
                 onImageUploadingChange={setImageUploading}
+                loading={testimonialsLoading}
               />
             )}
             {section === "contacts" && (
-              <ContactsSection contacts={contacts} onReload={load} />
+              <ContactsSection contacts={contacts} onReload={loadContacts} />
             )}
             {section === "categories" && <CategoriesSection />}
             {section === "navigation" && <NavigationSection />}
             {section === "analytics" && <AnalyticsDashboard />}
             {section === "users" && (
-              <UsersSection users={users} onReload={load} />
+              <UsersSection users={users} onReload={loadUsers} />
             )}
           </div>
         </div>

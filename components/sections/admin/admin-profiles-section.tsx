@@ -34,6 +34,7 @@ interface Props {
   onReload: () => void;
   emptyForm: ProfileForm;
   setEditingId: (id: string) => void;
+  loading?: boolean;
 }
 
 export function ProfilesSection({
@@ -46,6 +47,7 @@ export function ProfilesSection({
   onReload,
   emptyForm,
   setEditingId,
+  loading,
 }: Props) {
   return (
     <WorkspaceSplit
@@ -102,6 +104,7 @@ export function ProfilesSection({
       list={
         <WsTable
           cols={["Họ và tên", "Chức danh"]}
+          loading={loading}
           rows={profiles.map((item) => ({
             key: item.id,
             cells: [

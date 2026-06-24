@@ -1,5 +1,6 @@
 import { Edit, Eye, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   Table,
   TableHeader,
@@ -17,7 +18,7 @@ export interface WsRow {
   onDelete: () => void;
 }
 
-export function WsTable({ cols, rows }: { cols: string[]; rows: WsRow[] }) {
+export function WsTable({ cols, rows, loading }: { cols: string[]; rows: WsRow[]; loading?: boolean }) {
   return (
     <Table>
       <TableHeader>
@@ -35,7 +36,20 @@ export function WsTable({ cols, rows }: { cols: string[]; rows: WsRow[] }) {
       </TableHeader>
 
       <TableBody>
-        {rows.length === 0 && (
+        {loading ? (
+          Array.from({ length: 5 }).map((_, i) => (
+            <TableRow key={i} className="border-b border-border/50">
+              {cols.map((_, j) => (
+                <TableCell key={j} className="px-5 py-3">
+                  <Skeleton className="h-4 w-full" />
+                </TableCell>
+              ))}
+              <TableCell className="px-3 py-3">
+                <Skeleton className="h-8 w-8" />
+              </TableCell>
+            </TableRow>
+          ))
+        ) : rows.length === 0 ? (
           <TableRow>
             <TableCell
               colSpan={cols.length + 1}
@@ -44,51 +58,51 @@ export function WsTable({ cols, rows }: { cols: string[]; rows: WsRow[] }) {
               Chưa có dữ liệu
             </TableCell>
           </TableRow>
-        )}
+        ) : (
+          rows.map((row) => (
+            <TableRow
+              key={row.key}
+              className="group border-b border-border/50 hover:bg-muted/90 transition-colors bg-muted/10 backdrop-blur-md"
+            >
+              {row.cells.map((cell, i) => (
+                <TableCell key={i} className="px-5 py-3 max-w-50">
+                  {cell}
+                </TableCell>
+              ))}
 
-        {rows.map((row) => (
-          <TableRow
-            key={row.key}
-            className="group border-b border-border/50 hover:bg-muted/90 transition-colors bg-muted/10 backdrop-blur-md"
-          >
-            {row.cells.map((cell, i) => (
-              <TableCell key={i} className="px-5 py-3 max-w-50">
-                {cell}
-              </TableCell>
-            ))}
-
-            <TableCell className="px-3 py-3">
-              <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
-                {row.onView && (
+              <TableCell className="px-3 py-3">
+                <div className="flex gap-0.5 opacity-0 group-hover:opacity-100 transition-opacity justify-end">
+                  {row.onView && (
+                    <Button
+                      size="icon-sm"
+                      variant="ghost"
+                      onClick={row.onView}
+                      aria-label="Xem chi tiết"
+                    >
+                      <Eye className="size-3.5" />
+                    </Button>
+                  )}
                   <Button
                     size="icon-sm"
                     variant="ghost"
-                    onClick={row.onView}
-                    aria-label="Xem chi tiết"
+                    onClick={row.onEdit}
+                    aria-label="Chỉnh sửa"
                   >
-                    <Eye className="size-3.5" />
+                    <Edit className="size-3.5" />
                   </Button>
-                )}
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  onClick={row.onEdit}
-                  aria-label="Chỉnh sửa"
-                >
-                  <Edit className="size-3.5" />
-                </Button>
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  onClick={row.onDelete}
-                  aria-label="Xóa"
-                >
-                  <Trash2 className="size-3.5" />
-                </Button>
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
+                  <Button
+                    size="icon-sm"
+                    variant="ghost"
+                    onClick={row.onDelete}
+                    aria-label="Xóa"
+                  >
+                    <Trash2 className="size-3.5" />
+                  </Button>
+                </div>
+              </TableCell>
+            </TableRow>
+          ))
+        )}
       </TableBody>
     </Table>
   );

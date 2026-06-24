@@ -24,6 +24,7 @@ interface Props {
   emptyForm: TestimonialForm;
   setEditingId: (id: string) => void;
   onImageUploadingChange?: (isUploading: boolean) => void;
+  loading?: boolean;
 }
 
 export function AdminTestimonialsSection({
@@ -37,6 +38,7 @@ export function AdminTestimonialsSection({
   emptyForm,
   setEditingId,
   onImageUploadingChange,
+  loading,
 }: Props) {
   return (
     <WorkspaceSplit
@@ -130,6 +132,7 @@ export function AdminTestimonialsSection({
       list={
         <WsTable
           cols={["Người đánh giá", "Nội dung", "Thứ tự"]}
+          loading={loading}
           rows={testimonials.map((item) => ({
             key: item.id,
             cells: [
