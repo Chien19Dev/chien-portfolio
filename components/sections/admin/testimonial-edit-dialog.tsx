@@ -1,12 +1,10 @@
 "use client";
 
 import { Pattern } from "@/components/upload-file";
-import { Loader2, User, Briefcase, MessageSquare, Hash } from "lucide-react";
+import { User, Briefcase, MessageSquare, Hash } from "lucide-react";
 import type { Testimonial } from "@/lib/api";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import SaveIcon from "@mui/icons-material/Save";
-import AddIcon from "@mui/icons-material/Add";
 import DialogComponent from "@/components/common/dialog-component";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
@@ -56,19 +54,11 @@ export function TestimonialEditDialog({
             : "Đang tạo..."
           : isEditing
             ? "Cập nhật"
-            : "Tạo"
+            : "Xác nhận"
       }
       cancelText="Huỷ"
       confirmColor="primary"
-      confirmIcon={
-        loading ? (
-          <Loader2 className="size-4 animate-spin" />
-        ) : isEditing ? (
-          <SaveIcon />
-        ) : (
-          <AddIcon />
-        )
-      }
+      isEditing={isEditing}
       onConfirm={onSave}
     >
       <Stack spacing={3} sx={{ mt: 1 }}>

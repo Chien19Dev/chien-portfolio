@@ -57,6 +57,8 @@ export interface DialogComponentProps {
     | "warning"
     | "info";
 
+  isEditing?: boolean;
+
   onConfirm?: () => void;
 }
 
@@ -84,11 +86,12 @@ export default function DialogComponent({
 
   confirmColor = "primary",
 
+  isEditing = false,
+
   onConfirm,
 }: DialogComponentProps) {
   const defaultConfirmIcon =
-    confirmIcon ??
-    (confirmText.toLowerCase().includes("tạo") ? <AddIcon /> : <SaveIcon />);
+    confirmIcon ?? (isEditing ? <SaveIcon /> : <AddIcon />);
 
   return (
     <Dialog

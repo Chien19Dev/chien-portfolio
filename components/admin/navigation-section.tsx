@@ -1,18 +1,17 @@
 "use client";
 
-import type { FormEvent } from "react";
 import { useState, useEffect } from "react";
-import { Input } from "@/components/ui/input";
 import { api, Navigation } from "@/lib/api";
 import { alertSuccess, alertError } from "@/lib/alerts";
-import { WorkspaceSplit } from "@/components/admin/workspace-split";
-import { WsField } from "@/components/admin/ws-field";
-import { WsSubmit } from "@/components/admin/ws-submit";
 import { WsTable } from "@/components/admin/ws-table";
-import { Switch } from "@/components/ui/switch";
-import { Label } from "@/components/ui/label";
+import { NavigationEditDialog } from "@/components/sections/admin/navigation-edit-dialog";
+import Button from "@mui/material/Button";
+import AddIcon from "@mui/icons-material/Add";
 import { ArrowUp, ArrowDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import IconButton from "@mui/material/IconButton";
+import Tooltip from "@mui/material/Tooltip";
+import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 
 type NavForm = Omit<Navigation, "id" | "createdAt" | "updatedAt">;
 
@@ -28,6 +27,8 @@ export function NavigationSection() {
   const [items, setItems] = useState<Navigation[]>([]);
   const [form, setForm] = useState<NavForm>(emptyForm);
   const [editingId, setEditingId] = useState("");
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     load();
@@ -42,8 +43,8 @@ export function NavigationSection() {
     }
   }
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault();
+  async function handleSave() {
+    setLoading(true);
     try {
       const payload = {
         ...form,
@@ -56,11 +57,14 @@ export function NavigationSection() {
         await api.navigation.create(payload);
         alertSuccess("Đã tạo điều hướng");
       }
+      setDialogOpen(false);
       setForm(emptyForm);
       setEditingId("");
       await load();
     } catch {
       alertError("Có lỗi xảy ra khi lưu điều hướng");
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -84,132 +88,115 @@ export function NavigationSection() {
     }
   }
 
+  function handleOpenCreate() {
+    setForm(emptyForm);
+    setEditingId("");
+    setDialogOpen(true);
+  }
+
+  function handleOpenEdit(item: Navigation) {
+    setEditingId(item.id);
+    setForm({
+      label: item.label,
+      href: item.href,
+      icon: item.icon || "",
+      order: item.order || 0,
+      isActive: item.isActive !== false,
+    });
+    setDialogOpen(true);
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      await api.navigation.remove(id);
+      alertSuccess("Đã xóa điều hướng");
+      await load();
+    } catch {
+      alertError("Lỗi khi xóa");
+    }
+  }
+
   return (
-    <WorkspaceSplit
-      form={
-        <form onSubmit={handleSubmit} className="space-y-2">
-          <WsField label="Nhãn">
-            <Input
-              size="lg"
-              value={form.label}
-              onChange={(e) => setForm({ ...form, label: e.target.value })}
-              required
-            />
-          </WsField>
-          <WsField label="Đường dẫn (href)">
-            <Input
-              size="lg"
-              value={form.href}
-              onChange={(e) => setForm({ ...form, href: e.target.value })}
-              placeholder="/blog"
-              required
-            />
-          </WsField>
-          <WsField label="Icon (tên Lucide)">
-            <Input
-              size="lg"
-              value={form.icon || ""}
-              onChange={(e) => setForm({ ...form, icon: e.target.value })}
-              placeholder="BookOpen"
-            />
-          </WsField>
-          <WsField label="Thứ tự">
-            <Input
-              size="lg"
-              type="number"
-              value={form.order || 0}
-              onChange={(e) =>
-                setForm({ ...form, order: Number(e.target.value) })
-              }
-            />
-          </WsField>
-          <WsField label="Hiển thị">
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={form.isActive !== false}
-                onCheckedChange={(checked: boolean) =>
-                  setForm({ ...form, isActive: checked })
-                }
-              />
-              <Label className="text-sm text-muted-foreground">
-                {form.isActive !== false ? "Hiện" : "Ẩn"}
-              </Label>
-            </div>
-          </WsField>
-          <WsSubmit
-            isEditing={!!editingId}
-            label="điều hướng"
-            onCancel={
-              editingId
-                ? () => {
-                    setForm(emptyForm);
-                    setEditingId("");
-                  }
-                : undefined
-            }
-          />
-        </form>
-      }
-      list={
-        <WsTable
-          cols={["Nhãn", "Đường dẫn", "Thứ tự"]}
-          rows={items.map((item, index) => ({
-            key: item.id,
-            cells: [
-              <div key="label" className="flex items-center gap-2">
-                <span
-                  className={`size-2 rounded-full ${item.isActive !== false ? "bg-green-500" : "bg-muted-foreground/30"}`}
-                />
-                <p className="text-sm font-medium">{item.label}</p>
-              </div>,
+    <div className="p-6 space-y-4">
+      <div className="flex items-center justify-between">
+        <h2 className="text-lg font-semibold">Danh sách điều hướng</h2>
+        <Button
+          variant="outlined"
+          startIcon={<AddIcon />}
+          onClick={handleOpenCreate}
+        >
+          Tạo mới
+        </Button>
+      </div>
+      <WsTable
+        cols={["Nhãn", "Đường dẫn", "Thứ tự"]}
+        rows={items.map((item, index) => ({
+          key: item.id,
+          cells: [
+            <div key="label" className="flex items-center gap-2">
               <span
-                key="href"
-                className="text-xs text-muted-foreground font-mono"
+                className={`size-2 rounded-full ${item.isActive !== false ? "bg-green-500" : "bg-muted-foreground/30"}`}
+              />
+              <p className="text-sm font-medium">{item.label}</p>
+            </div>,
+            <span
+              key="href"
+              className="text-xs text-muted-foreground font-mono"
+            >
+              {item.href}
+            </span>,
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+                gap: 0.5,
+              }}
+            >
+              <Typography
+                variant="body2"
+                sx={{ fontVariantNumeric: "tabular-nums" }}
               >
-                {item.href}
-              </span>,
-              <div key="order" className="flex items-center gap-1">
-                <span className="text-xs tabular-nums">{item.order ?? 0}</span>
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  onClick={() => handleReorder(item.id, "up")}
-                  disabled={index === 0}
-                >
-                  <ArrowUp className="size-3" />
-                </Button>
-                <Button
-                  size="icon-sm"
-                  variant="ghost"
-                  onClick={() => handleReorder(item.id, "down")}
-                  disabled={index === items.length - 1}
-                >
-                  <ArrowDown className="size-3" />
-                </Button>
-              </div>,
-            ],
-            onEdit: () => {
-              setEditingId(item.id);
-              setForm({
-                label: item.label,
-                href: item.href,
-                icon: item.icon || "",
-                order: item.order || 0,
-                isActive: item.isActive !== false,
-              });
-            },
-            onDelete: async () => {
-              try {
-                await api.navigation.remove(item.id);
-                alertSuccess("Đã xóa điều hướng");
-                await load();
-              } catch {
-                alertError("Lỗi khi xóa");
-              }
-            },
-          }))}
-        />
-      }
-    />
+                {item.order ?? 0}
+              </Typography>
+
+              <Tooltip title="Di chuyển lên">
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleReorder(item.id, "up")}
+                    disabled={index === 0}
+                  >
+                    <ArrowUp size={16} />
+                  </IconButton>
+                </span>
+              </Tooltip>
+
+              <Tooltip title="Di chuyển xuống">
+                <span>
+                  <IconButton
+                    size="small"
+                    onClick={() => handleReorder(item.id, "down")}
+                    disabled={index === items.length - 1}
+                  >
+                    <ArrowDown size={16} />
+                  </IconButton>
+                </span>
+              </Tooltip>
+            </Box>,
+          ],
+          onEdit: () => handleOpenEdit(item),
+          onDelete: () => handleDelete(item.id),
+        }))}
+      />
+      <NavigationEditDialog
+        nav={form}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onChange={setForm}
+        onSave={handleSave}
+        isEditing={!!editingId}
+        loading={loading}
+      />
+    </div>
   );
 }

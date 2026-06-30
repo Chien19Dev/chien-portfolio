@@ -102,10 +102,11 @@ export function ProfileEditDialog({
             : "Đang tạo..."
           : isEditing
             ? "Cập nhật"
-            : "Tạo"
+            : "Xác nhận"
       }
       cancelText="Huỷ"
       confirmColor="primary"
+      isEditing={isEditing}
       onConfirm={onSave}
     >
       <Stack spacing={3}>

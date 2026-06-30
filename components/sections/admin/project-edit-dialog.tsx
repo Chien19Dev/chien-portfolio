@@ -57,9 +57,10 @@ export function ProjectEditDialog({
             : "Đang tạo..."
           : isEditing
             ? "Cập nhật"
-            : "Tạo"
+            : "Xác nhận"
       }
       cancelText="Huỷ"
+      isEditing={isEditing}
       onConfirm={onSave}
     >
       <Stack spacing={3} sx={{ mt: 1 }}>
