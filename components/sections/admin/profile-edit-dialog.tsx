@@ -23,7 +23,7 @@ import { alertError } from "@/lib/alerts";
 import type { Profile } from "@/lib/api";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import DialogComponent from "@/components/common/DialogComponent";
+import DialogComponent from "@/components/common/dialog-component";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Stack from "@mui/material/Stack";
@@ -215,7 +215,6 @@ export function ProfileEditDialog({
         </Grid>
 
         <Grid container spacing={2}>
-
           <Grid size={{ xs: 12, lg: 6 }}>
             <TextField
               label="Số điện thoại"
@@ -267,7 +266,6 @@ export function ProfileEditDialog({
         />
 
         <Grid container spacing={2}>
-
           <Grid size={{ xs: 12, lg: 6 }}>
             <TextField
               label="GitHub URL"

@@ -4,7 +4,7 @@ import { Zap, Folder, Star, Hash } from "lucide-react";
 import type { Skill } from "@/lib/api";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import DialogComponent from "@/components/common/DialogComponent";
+import DialogComponent from "@/components/common/dialog-component";
 import Stack from "@mui/material/Stack";
 import Grid from "@mui/material/Grid";
 import FormControlLabel from "@mui/material/FormControlLabel";
@@ -55,7 +55,7 @@ export function SkillEditDialog({
       cancelText="Huỷ"
       onConfirm={onSave}
     >
-      <Stack spacing={3}>
+      <Stack spacing={3} sx={{ mt: 1 }}>
         <TextField
           label="Tên kỹ năng"
           value={skill.name}
@@ -72,38 +72,40 @@ export function SkillEditDialog({
           }}
         />
 
-        <TextField
-          label="Danh mục"
-          value={skill.category || ""}
-          onChange={(e) => onChange({ ...skill, category: e.target.value })}
-          placeholder="Frontend, Backend, DevOps..."
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Folder className="size-4 text-muted-foreground" />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-
-        <TextField
-          label="Icon"
-          value={skill.icon || ""}
-          onChange={(e) => onChange({ ...skill, icon: e.target.value })}
-          placeholder="lucide-react icon name"
-          slotProps={{
-            input: {
-              endAdornment: (
-                <InputAdornment position="end">
-                  <Star className="size-4 text-muted-foreground" />
-                </InputAdornment>
-              ),
-            },
-          }}
-        />
-
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              label="Danh mục"
+              value={skill.category || ""}
+              onChange={(e) => onChange({ ...skill, category: e.target.value })}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Folder className="size-4 text-muted-foreground" />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <TextField
+              label="Icon"
+              value={skill.icon || ""}
+              onChange={(e) => onChange({ ...skill, icon: e.target.value })}
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <Star className="size-4 text-muted-foreground" />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+            />
+          </Grid>
+        </Grid>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6 }}>
             <TextField

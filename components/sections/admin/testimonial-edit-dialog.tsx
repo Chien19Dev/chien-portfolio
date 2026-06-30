@@ -7,7 +7,7 @@ import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
 import SaveIcon from "@mui/icons-material/Save";
 import AddIcon from "@mui/icons-material/Add";
-import DialogComponent from "@/components/common/DialogComponent";
+import DialogComponent from "@/components/common/dialog-component";
 import Stack from "@mui/material/Stack";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
@@ -71,7 +71,7 @@ export function TestimonialEditDialog({
       }
       onConfirm={onSave}
     >
-      <Stack spacing={3}>
+      <Stack spacing={3} sx={{ mt: 1 }}>
         <TextField
           label="Tên người đánh giá"
           value={testimonial.authorName}

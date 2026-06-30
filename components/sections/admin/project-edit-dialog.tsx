@@ -6,7 +6,7 @@ import { FaGithub } from "react-icons/fa";
 import type { Project } from "@/lib/api";
 import TextField from "@mui/material/TextField";
 import InputAdornment from "@mui/material/InputAdornment";
-import DialogComponent from "@/components/common/DialogComponent";
+import DialogComponent from "@/components/common/dialog-component";
 import Grid from "@mui/material/Grid";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Stack from "@mui/material/Stack";
@@ -62,7 +62,7 @@ export function ProjectEditDialog({
       cancelText="Huỷ"
       onConfirm={onSave}
     >
-      <Stack spacing={3}>
+      <Stack spacing={3} sx={{ mt: 1 }}>
         <TextField
           label="Tên dự án"
           value={project.title}
@@ -114,7 +114,6 @@ export function ProjectEditDialog({
               technologiesText: e.target.value,
             })
           }
-          placeholder="React, Next.js, TypeScript..."
           slotProps={{
             input: {
               endAdornment: (
